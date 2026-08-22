@@ -45,7 +45,7 @@
 
     <!-- PWA y Scripts Originales -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f0c29">
+    <meta name="theme-color" content="#FFFFFF">
     
     <!-- Carga del Cliente de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -55,34 +55,42 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 
         :root {
-            --bg-body: #0f0c29;
-            --bg-gradient: linear-gradient(135deg, #1a0533 0%, #0f2027 40%, #203a43 70%, #2c5364 100%);
-            --surface: rgba(255, 255, 255, 0.10);
-            --surface-alt: rgba(255, 255, 255, 0.06);
-            --surface-solid: rgba(30, 20, 60, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.18);
-            --glass-border-strong: rgba(255, 255, 255, 0.28);
-            --text-main: #F0EEFF;
-            --text-secondary: rgba(220, 210, 255, 0.75);
-            --text-tertiary: rgba(200, 190, 240, 0.50);
+            /* ESTÉTICA PREMIUM: Blanco, amarillo y naranja corporativo */
+            --bg-body: #FAFAFA;
+            --bg-gradient: linear-gradient(135deg, #FFFFFF 0%, #FFF8E1 40%, #FFE0B2 75%, #FFCC80 100%);
+            --surface: rgba(255, 255, 255, 0.70);
+            --surface-alt: rgba(255, 255, 255, 0.45);
+            --surface-solid: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 122, 32, 0.20);
+            --glass-border-strong: rgba(255, 122, 32, 0.40);
+            
+            /* Textos ajustados para fondo claro (Alta legibilidad) */
+            --text-main: #1A202C; 
+            --text-secondary: #4A5568;
+            --text-tertiary: #718096;
+            
             --brand-dark: #E65100;
             --brand-main: #FF7A20;
             --brand-light: #FFAA50;
-            --brand-soft: rgba(255, 122, 32, 0.18);
-            --brand-glow: rgba(255, 122, 32, 0.35);
-            --accent-danger: #FF6B8A;
-            --danger-soft: rgba(255, 107, 138, 0.15);
-            --accent-warn: #FFD166;
-            --warn-soft: rgba(255, 209, 102, 0.15);
-            --accent-green: #06FFA5;
+            --brand-soft: rgba(255, 122, 32, 0.15);
+            --brand-glow: rgba(255, 122, 32, 0.25);
+            
+            --accent-danger: #E53E3E;
+            --danger-soft: rgba(229, 62, 62, 0.12);
+            --accent-warn: #DD6B20;
+            --warn-soft: rgba(221, 107, 32, 0.15);
+            --accent-green: #38A169;
+            
             --radius-sm: 14px;
             --radius-md: 20px;
             --radius-lg: 28px;
             --radius-pill: 999px;
-            --shadow-sm: 0 4px 16px rgba(0,0,0,0.25);
-            --shadow-md: 0 12px 32px rgba(0,0,0,0.35);
-            --shadow-float: 0 24px 48px rgba(0,0,0,0.50);
-            --shadow-glow: 0 8px 32px rgba(255, 122, 32, 0.30);
+            
+            --shadow-sm: 0 4px 16px rgba(0,0,0,0.06);
+            --shadow-md: 0 12px 32px rgba(255,122,32,0.12);
+            --shadow-float: 0 24px 48px rgba(0,0,0,0.15);
+            --shadow-glow: 0 8px 32px rgba(255, 122, 32, 0.25);
+            
             --blur: blur(20px);
             --blur-sm: blur(10px);
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -99,7 +107,7 @@
             min-height: 100vh;
         }
 
-        /* Orbes de fondo animados */
+        /* Orbes de fondo animados - Tonos cálidos */
         body::before {
             content: '';
             position: fixed;
@@ -107,7 +115,7 @@
             left: -20%;
             width: 60%;
             height: 60%;
-            background: radial-gradient(circle, rgba(255,100,0,0.12) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,165,0,0.25) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
@@ -120,7 +128,7 @@
             right: -15%;
             width: 50%;
             height: 50%;
-            background: radial-gradient(circle, rgba(80,0,200,0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,200,0,0.20) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
@@ -159,12 +167,12 @@
             transform: translate(-50%, -50%);
             width: 280px;
             height: 280px;
-            background: radial-gradient(circle, rgba(255,120,30,0.25) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,120,30,0.35) 0%, transparent 70%);
             border-radius: 50%;
             animation: pulseGlow 2s ease-in-out infinite;
         }
         @keyframes pulseGlow { 0%,100%{opacity:0.5;transform:translate(-50%,-50%) scale(1)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)} }
-        #splash-screen img { width: 220px; max-width: 80%; height: auto; position: relative; z-index: 1; filter: drop-shadow(0 0 40px rgba(255,120,30,0.5)); }
+        #splash-screen img { width: 220px; max-width: 80%; height: auto; position: relative; z-index: 1; filter: drop-shadow(0 0 40px rgba(255,120,30,0.3)); }
 
         .header-logo-container { text-align: center; margin-bottom: 12px; }
         .header-logo-container img { width: 160px; max-width: 70%; height: auto; }
@@ -175,7 +183,7 @@
         .text-huge { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
         .text-muted { color: var(--text-secondary); font-size: 14px; }
         .text-small { color: var(--text-tertiary); font-size: 13px; font-weight: 600; }
-        .section-label { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 12px; margin-top: 24px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .section-label { font-size: 15px; font-weight: 800; color: var(--text-secondary); margin-bottom: 12px; margin-top: 24px; text-transform: uppercase; letter-spacing: 0.5px;}
 
         .flex-row { display: flex; align-items: center; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
@@ -198,14 +206,13 @@
             border-radius: var(--radius-md); 
             padding: 18px; 
             margin-bottom: 14px; 
-            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.15); 
+            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.7); 
             border: 1px solid var(--glass-border); 
         }
         .card-compact { padding: 14px 18px; }
-        .card-dark { background: rgba(10, 5, 30, 0.75); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); }
         
         .dash-hero { 
-            background: linear-gradient(135deg, rgba(255,110,0,0.85) 0%, rgba(200,50,0,0.90) 100%); 
+            background: linear-gradient(135deg, rgba(255,122,32,0.95) 0%, rgba(230,81,0,0.95) 100%); 
             backdrop-filter: var(--blur-sm);
             -webkit-backdrop-filter: var(--blur-sm);
             color: white; 
@@ -224,7 +231,7 @@
             right: -10%; 
             width: 160%; 
             height: 160%; 
-            background: radial-gradient(ellipse, rgba(255,255,255,0.20) 0%, transparent 55%); 
+            background: radial-gradient(ellipse, rgba(255,255,255,0.25) 0%, transparent 55%); 
             pointer-events: none; 
         }
         .dash-hero::after {
@@ -234,12 +241,12 @@
             left: -10%;
             width: 80%;
             height: 80%;
-            background: radial-gradient(ellipse, rgba(0,0,0,0.20) 0%, transparent 70%);
+            background: radial-gradient(ellipse, rgba(0,0,0,0.15) 0%, transparent 70%);
             pointer-events: none;
         }
         
         .dash-vault { 
-            background: linear-gradient(135deg, rgba(255,183,77,0.85) 0%, rgba(255,130,0,0.90) 100%); 
+            background: linear-gradient(135deg, rgba(255,170,80,0.95) 0%, rgba(255,122,32,0.95) 100%); 
             backdrop-filter: var(--blur-sm);
             -webkit-backdrop-filter: var(--blur-sm);
             color: white; 
@@ -249,7 +256,7 @@
             justify-content: space-between; 
             align-items: center; 
             margin-bottom: 24px; 
-            box-shadow: 0 10px 30px rgba(255, 150, 0, 0.30), inset 0 1px 0 rgba(255,255,255,0.30);
+            box-shadow: 0 10px 30px rgba(255, 150, 0, 0.20), inset 0 1px 0 rgba(255,255,255,0.30);
             border: 1px solid rgba(255, 210, 100, 0.35);
             position: relative;
             overflow: hidden;
@@ -261,22 +268,22 @@
             right: 10%;
             width: 120%;
             height: 120%;
-            background: radial-gradient(ellipse, rgba(255,255,255,0.15) 0%, transparent 60%);
+            background: radial-gradient(ellipse, rgba(255,255,255,0.20) 0%, transparent 60%);
             pointer-events: none;
         }
-        .dash-vault .text-muted { color: rgba(255,255,255,0.85) !important; }
+        .dash-vault .text-muted { color: rgba(255,255,255,0.9) !important; }
         
         .progress-track { 
-            background: rgba(0,0,0,0.30); 
+            background: rgba(0,0,0,0.20); 
             height: 10px; 
             border-radius: var(--radius-pill); 
             overflow: hidden; 
             margin: 12px 0 8px; 
             width: 100%; 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
         }
         .progress-fill { 
-            background: linear-gradient(90deg, rgba(255,220,100,0.9), rgba(255,255,255,0.95)); 
+            background: linear-gradient(90deg, rgba(255,220,100,1), rgba(255,255,255,0.95)); 
             height: 100%; 
             width: 0%; 
             border-radius: var(--radius-pill); 
@@ -302,37 +309,34 @@
         .btn-primary { 
             background: linear-gradient(135deg, var(--brand-main) 0%, var(--brand-dark) 100%); 
             color: white; 
-            box-shadow: 0 6px 24px rgba(255, 110, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.25); 
+            box-shadow: 0 6px 24px rgba(255, 110, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.25); 
             border: 1px solid rgba(255,150,80,0.30);
         }
-        .btn-primary:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(255, 109, 0, 0.30); }
+        .btn-primary:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(255, 109, 0, 0.25); }
         
         .btn-dark { 
-            background: rgba(10, 5, 30, 0.80); 
-            backdrop-filter: var(--blur-sm);
-            -webkit-backdrop-filter: var(--blur-sm);
+            background: var(--text-main); 
             color: white; 
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255,255,255,0.10); 
-            border: 1px solid var(--glass-border);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); 
         }
         .btn-dark:active { transform: scale(0.96); }
         
         .btn-outline { 
-            background: rgba(255,255,255,0.08); 
+            background: var(--surface); 
             backdrop-filter: var(--blur-sm);
             -webkit-backdrop-filter: var(--blur-sm);
-            border: 1px solid var(--glass-border-strong); 
-            color: var(--text-main); 
+            border: 2px solid var(--brand-main); 
+            color: var(--brand-dark); 
             box-shadow: var(--shadow-sm);
         }
-        .btn-outline:active { transform: scale(0.96); background: rgba(255,255,255,0.14); }
+        .btn-outline:active { transform: scale(0.96); background: var(--brand-soft); }
         
         .btn-light { 
-            background: rgba(255,255,255,0.10); 
+            background: rgba(255,255,255,0.60); 
             backdrop-filter: var(--blur-sm);
             -webkit-backdrop-filter: var(--blur-sm);
-            color: var(--text-main); 
-            border: 1px solid var(--glass-border);
+            color: var(--text-secondary); 
+            border: 1px solid var(--glass-border-strong);
         }
         
         .btn-danger { 
@@ -340,8 +344,8 @@
             backdrop-filter: var(--blur-sm);
             -webkit-backdrop-filter: var(--blur-sm);
             color: var(--accent-danger); 
-            box-shadow: 0 6px 20px rgba(255, 80, 120, 0.20);
-            border: 1px solid rgba(255,107,138,0.25);
+            box-shadow: 0 6px 20px rgba(229, 62, 62, 0.15);
+            border: 1px solid rgba(229,62,62,0.25);
         }
         .btn-danger:active { transform: scale(0.96); }
         
@@ -357,10 +361,10 @@
             align-items: center; 
             justify-content: center; 
             font-size: 20px; 
-            background: rgba(255,255,255,0.10); 
+            background: var(--surface-solid); 
             backdrop-filter: var(--blur-sm);
             -webkit-backdrop-filter: var(--blur-sm);
-            box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.15); 
+            box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.8); 
             border: 1px solid var(--glass-border); 
             cursor: pointer; 
             transition: transform 0.1s;
@@ -372,7 +376,7 @@
             width: 100%; 
             height: 110px; 
             background: var(--brand-soft); 
-            border: 1.5px dashed rgba(255,122,32,0.60); 
+            border: 1.5px dashed rgba(255,122,32,0.50); 
             border-radius: var(--radius-md); 
             display: flex; 
             flex-direction: column; 
@@ -389,17 +393,17 @@
         .cam-icon svg { width: 32px; height: 32px; stroke: var(--brand-main); }
 
         .tag { font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: var(--radius-pill); display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;}
-        .tag-green { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.35); backdrop-filter: var(--blur-sm); -webkit-backdrop-filter: var(--blur-sm); }
-        .tag-dark { background: rgba(0,0,0,0.40); color: white; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: var(--blur-sm); -webkit-backdrop-filter: var(--blur-sm); }
-        .tag-danger { background: var(--danger-soft); color: var(--accent-danger); border: 1px solid rgba(255,107,138,0.25); }
-        .tag-timer { font-family: monospace; background: var(--warn-soft); color: var(--accent-warn); padding: 4px 8px; border-radius: 8px; font-weight: bold; font-size: 14px; border: 1px solid rgba(255,209,102,0.25);}
+        .tag-green { background: var(--brand-main); color: white; border: none; box-shadow: 0 2px 8px rgba(255,122,32,0.3);}
+        .tag-dark { background: var(--text-main); color: white; border: none; }
+        .tag-danger { background: var(--danger-soft); color: var(--accent-danger); border: 1px solid rgba(229,62,62,0.25); }
+        .tag-timer { font-family: monospace; background: var(--warn-soft); color: var(--accent-warn); padding: 4px 8px; border-radius: 8px; font-weight: bold; font-size: 14px; border: 1px solid rgba(221,107,32,0.25);}
 
         .input-clean { 
             width: 100%; 
-            background: rgba(255,255,255,0.08); 
+            background: rgba(255,255,255,0.8); 
             backdrop-filter: var(--blur-sm);
             -webkit-backdrop-filter: var(--blur-sm);
-            border: 1px solid var(--glass-border); 
+            border: 1px solid var(--glass-border-strong); 
             padding: 16px; 
             border-radius: var(--radius-sm); 
             font-size: 16px; 
@@ -409,8 +413,8 @@
             transition: var(--transition); 
         }
         .input-clean::placeholder { color: var(--text-tertiary); }
-        .input-clean:focus { border-color: rgba(255,122,32,0.70); background: rgba(255,255,255,0.12); box-shadow: 0 0 0 3px rgba(255,122,32,0.15); }
-        .input-clean option { background: #1a0533; color: var(--text-main); }
+        .input-clean:focus { border-color: rgba(255,122,32,0.70); background: #FFFFFF; box-shadow: 0 0 0 3px rgba(255,122,32,0.15); }
+        .input-clean option { background: #FFFFFF; color: var(--text-main); }
 
         .store-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
         .store-card { 
@@ -423,7 +427,7 @@
             flex-direction: column; 
             gap: 12px; 
             border: 1px solid var(--glass-border); 
-            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.12); 
+            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.7); 
             transition: transform 0.2s; 
         }
         .store-card:active { transform: scale(0.96); }
@@ -435,27 +439,27 @@
             transform: translateX(-50%); 
             width: 100%; 
             max-width: 414px; 
-            background: rgba(15, 10, 40, 0.75); 
+            background: rgba(255, 255, 255, 0.90); 
             backdrop-filter: blur(28px); 
             -webkit-backdrop-filter: blur(28px);
-            border-top: 1px solid var(--glass-border); 
+            border-top: 1px solid rgba(0,0,0,0.05); 
             display: flex; 
             justify-content: space-around; 
             padding: 16px 20px calc(16px + env(safe-area-inset-bottom)); 
             z-index: 100; 
-            box-shadow: 0 -1px 0 rgba(255,255,255,0.08), 0 -20px 40px rgba(0,0,0,0.30);
+            box-shadow: 0 -20px 40px rgba(0,0,0,0.05);
         }
         .nav-item { font-size: 14px; font-weight: 700; color: var(--text-tertiary); padding: 10px 18px; border-radius: var(--radius-pill); cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; align-items: center; gap: 4px;}
-        .nav-item.active { color: var(--brand-light); background: var(--brand-soft); border: 1px solid rgba(255,122,32,0.25); }
+        .nav-item.active { color: var(--brand-dark); background: var(--brand-soft); border: 1px solid rgba(255,122,32,0.25); }
         .nav-icon { width: 24px; height: 24px; margin-bottom: 2px; stroke: var(--text-tertiary); transition: var(--transition); }
-        .nav-item.active .nav-icon { stroke: var(--brand-light); }
+        .nav-item.active .nav-icon { stroke: var(--brand-dark); }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(5, 2, 20, 0.70); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; justify-content: center; align-items: flex-end; z-index: 200; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: flex-end; z-index: 200; }
         .modal-sheet { 
-            background: rgba(20, 12, 50, 0.92); 
+            background: rgba(255, 255, 255, 0.98); 
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(0,0,0,0.08);
             border-bottom: none;
             width: 100%; 
             max-width: 414px; 
@@ -463,7 +467,7 @@
             border-radius: var(--radius-lg) var(--radius-lg) 0 0; 
             padding: 24px; 
             overflow-y: auto; 
-            box-shadow: var(--shadow-float), inset 0 1px 0 rgba(255,255,255,0.15); 
+            box-shadow: var(--shadow-float); 
             animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
         
@@ -471,30 +475,30 @@
 
         .login-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 24px; }
         .profile-card { 
-            background: var(--surface); 
+            background: var(--surface-solid); 
             backdrop-filter: var(--blur);
             -webkit-backdrop-filter: var(--blur);
             padding: 32px 16px; 
             border-radius: var(--radius-lg); 
             text-align: center; 
             cursor: pointer; 
-            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.15); 
-            border: 1px solid var(--glass-border); 
+            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,1); 
+            border: 1px solid var(--glass-border-strong); 
             transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; 
         }
         .profile-card:active { transform: scale(0.95); border-color: rgba(255,122,32,0.60); box-shadow: var(--shadow-glow); }
         
         /* Estilos para los Logos Vectorizados */
         .profile-emoji { margin-bottom: 16px; display: flex; justify-content: center; align-items: center; }
-        .profile-emoji svg { width: 56px; height: 56px; stroke: var(--text-main); transition: var(--transition); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+        .profile-emoji svg { width: 56px; height: 56px; stroke: var(--text-main); transition: var(--transition); filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
         .profile-card:hover .profile-emoji svg { stroke: var(--brand-main); transform: scale(1.05); }
         
         .admin-card { 
-            background: linear-gradient(135deg, rgba(255,110,0,0.25) 0%, rgba(150,0,200,0.20) 100%); 
-            border-color: rgba(255,122,32,0.35); 
-            box-shadow: 0 8px 24px rgba(255,80,0,0.20), inset 0 1px 0 rgba(255,255,255,0.18);
+            background: linear-gradient(135deg, rgba(255,122,32,0.10) 0%, rgba(255,200,0,0.15) 100%); 
+            border-color: rgba(255,122,32,0.40); 
+            box-shadow: 0 8px 24px rgba(255,122,32,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
         }
-        .admin-card .profile-emoji svg { stroke: var(--brand-main); filter: drop-shadow(0 0 12px rgba(255,122,32,0.5)); }
+        .admin-card .profile-emoji svg { stroke: var(--brand-main); filter: drop-shadow(0 0 12px rgba(255,122,32,0.3)); }
 
         .text-center { text-align: center; }
         .w-full { width: 100%; }
@@ -514,31 +518,20 @@
             box-shadow: var(--shadow-md); 
             border: 1px solid var(--glass-border); 
         }
-        
-        /* Ajustes generales de texto para dark bg */
-        .section-label { 
-            font-size: 12px; 
-            font-weight: 800; 
-            color: var(--text-secondary); 
-            margin-bottom: 12px; 
-            margin-top: 24px; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px;
-        }
 
         /* Kid banned glass */
         #kid-banned-screen {
-            background: rgba(255,107,138,0.12) !important;
-            border: 1px solid rgba(255,107,138,0.30) !important;
+            background: rgba(229,62,62,0.08) !important;
+            border: 1px solid rgba(229,62,62,0.30) !important;
             backdrop-filter: var(--blur);
             -webkit-backdrop-filter: var(--blur);
         }
 
-        /* Table styles for dark bg */
-        table th { color: var(--text-secondary) !important; background: rgba(255,255,255,0.06) !important; }
+        /* Table styles for light bg */
+        table th { color: var(--text-secondary) !important; background: rgba(0,0,0,0.03) !important; }
         table td { color: var(--text-secondary) !important; }
-        table tr { border-bottom-color: rgba(255,255,255,0.08) !important; }
-        table thead tr { border-bottom-color: rgba(255,255,255,0.15) !important; }
+        table tr { border-bottom-color: rgba(0,0,0,0.05) !important; }
+        table thead tr { border-bottom-color: rgba(0,0,0,0.10) !important; }
         
         select.input-clean { appearance: none; -webkit-appearance: none; }
     </style>
@@ -605,25 +598,25 @@
                     </svg>
                 </div>
                 <h3>Papás</h3>
-                <div class="text-small" style="color: rgba(255,255,255,0.7); margin-top: 4px;">Control</div>
+                <div class="text-small" style="color: var(--brand-dark); margin-top: 4px;">Control</div>
             </div>
         </div>
         
         <div class="text-center mt-lg">
-            <button class="btn-mini btn-outline" style="border: 2px solid var(--brand-main); color: var(--brand-main);" onclick="compartirApp()">📤 Compartir App con otra familia</button>
+            <button class="btn-mini btn-outline" onclick="compartirApp()">📤 Compartir App con otra familia</button>
         </div>
 
         <div class="seo-container">
             <h2 class="section-label" style="margin-top: 0;">Comparativa de Ahorro</h2>
             <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; margin-bottom: 20px;">
                 <thead>
-                    <tr style="background: var(--surface-alt); border-bottom: 2px solid #E5E7EB;">
+                    <tr style="background: var(--surface-alt); border-bottom: 2px solid rgba(0,0,0,0.1);">
                         <th style="padding: 10px; color: var(--text-main);">Método</th>
                         <th style="padding: 10px; color: var(--text-main);">Económikids</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr style="border-bottom: 1px solid #E5E7EB;">
+                    <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
                         <td style="padding: 10px; color: var(--text-secondary);">Tradicional / Papel</td>
                         <td style="padding: 10px; font-weight: 700; color: var(--brand-main);">Gamificado Automático</td>
                     </tr>
@@ -669,12 +662,12 @@
             <div id="kid-normal-content">
                 <div class="dash-hero flex-col">
                     <div class="flex-between mb-sm" style="position: relative; z-index: 2;">
-                        <span class="text-small" style="color:rgba(255,255,255,0.9); font-weight:700; text-transform:uppercase;">Puntos Listos</span>
+                        <span class="text-small" style="color:rgba(255,255,255,0.95); font-weight:700; text-transform:uppercase;">Puntos Listos</span>
                         <button class="btn-mini" style="background:rgba(255,255,255,0.25); color:white; border:none; backdrop-filter:blur(4px);" onclick="setGoalPrompt()">🎯 Cambiar Meta</button>
                     </div>
                     <div class="text-huge mb-md flex-row gap-sm" style="position: relative; z-index: 2; font-size: 48px;">
                         <span class="display-points" id="main-points-display">0</span> 
-                        <span style="font-size: 20px; opacity: 0.9; margin-top: 15px;">pts</span>
+                        <span style="font-size: 20px; opacity: 0.95; margin-top: 15px;">pts</span>
                     </div>
                     
                     <div class="flex-between" style="position: relative; z-index: 2;">
@@ -690,11 +683,11 @@
                     <div class="flex-col gap-xs">
                         <span class="text-small font-bold text-muted" style="text-transform:uppercase; letter-spacing:1px;">🔒 Tu Cofre Secreto</span>
                         <span class="text-huge" style="font-size: 32px;"><span id="vault-points">0</span> pts</span>
-                        <span class="tag tag-green" style="width: fit-content; margin-top: 4px;">+10% Extra Semanal</span>
+                        <span class="tag tag-green" style="width: fit-content; margin-top: 4px; background:white; color:var(--brand-dark);">+10% Extra Semanal</span>
                     </div>
                     <div class="flex-col gap-sm">
                         <button class="btn-mini btn-dark" style="background: white; color: var(--brand-main);" onclick="depositVaultQuick()">➕ Guardar</button>
-                        <button class="btn-mini btn-outline" style="border-color: rgba(255,255,255,0.4); color: white; background:transparent;" onclick="withdrawVaultQuick()">➖ Sacar</button>
+                        <button class="btn-mini btn-outline" style="border-color: rgba(255,255,255,0.8); color: white; background:transparent;" onclick="withdrawVaultQuick()">➖ Sacar</button>
                     </div>
                 </div>
 
@@ -708,7 +701,7 @@
 
     <!-- VISTA: SUBIR FOTO -->
     <div id="view-task-submit" class="hidden pad-content" style="padding-top: 32px;">
-        <button class="btn-mini btn-outline mb-md" onclick="navTo('kid-dash')">← Atrás</button>
+        <button class="btn-mini btn-outline mb-md" style="border:1px solid var(--glass-border-strong);" onclick="navTo('kid-dash')">← Atrás</button>
         <h2 id="submit-task-title" class="mb-sm">Misión</h2>
         <p class="text-muted mb-md">Sube tus fotos para ganarte los puntos.</p>
 
@@ -725,7 +718,7 @@
                 <img id="img-preview-before" class="preview-img">
             </div>
             
-            <div style="height: 1px; background: #E5E7EB; margin: 8px 0;"></div>
+            <div style="height: 1px; background: rgba(0,0,0,0.05); margin: 8px 0;"></div>
 
             <div>
                 <span class="text-small font-bold" style="font-size: 16px;">2. ¿Cómo quedó? ¡Brillante!</span>
@@ -781,10 +774,10 @@
                 <select id="penalty-kid" class="input-clean" onchange="updatePenaltyCardUI()"></select>
                 <input type="text" id="penalty-reason" class="input-clean" placeholder="Motivo (opcional)">
                 <div class="flex-row gap-sm">
-                    <button class="btn btn-outline" onclick="giveWarning()">⚠️ Aviso</button>
+                    <button class="btn btn-outline" style="border:1px solid var(--glass-border-strong);" onclick="giveWarning()">⚠️ Aviso</button>
                     <button class="btn btn-danger" onclick="applyPenalty()">🚨 Multa -50</button>
                 </div>
-                <button class="btn btn-outline w-full" id="btn-ban-action" onclick="toggleBanKid()">⛔ Vetar</button>
+                <button class="btn btn-dark w-full" id="btn-ban-action" onclick="toggleBanKid()">⛔ Vetar</button>
             </div>
 
             <div class="section-label">Nueva Misión (Con Cronómetro)</div>
@@ -811,7 +804,7 @@
             <div id="admin-store-manage-list" class="flex-col gap-sm"></div>
             
             <button class="btn btn-dark mt-md" onclick="payVaultInterest()">📈 Pagar Intereses Cofres</button>
-            <button class="btn btn-outline mt-md" style="color: var(--accent-danger); border-color: var(--accent-danger); background: var(--danger-soft);" onclick="hardResetData()">⚠️ REINICIAR TODO A CERO</button>
+            <button class="btn btn-outline mt-md" style="color: var(--accent-danger); border-color: var(--danger-soft); background: var(--danger-soft);" onclick="hardResetData()">⚠️ REINICIAR TODO A CERO</button>
         </div>
     </div>
 
@@ -888,7 +881,7 @@
         });
     }
 
-    // 1. INICIALIZACIÓN ÉLITE DE SUPABASE (Variables corregidas para no chocar)
+    // 1. INICIALIZACIÓN ÉLITE DE SUPABASE
     const supabaseUrl = 'https://pvqvhvblxqaevedeuqbk.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2cXZodmJseHFhZXZlZGV1cWJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxNzU1NDMsImV4cCI6MjEwMjc1MTU0M30.WWjOoSnm2NMmc6oZwIbv2nF6JQtKerIl_QjWx2v0_4I';
     const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -981,6 +974,10 @@
                         
                         let kidEl = document.getElementById(`timer-kid-${task.id}`);
                         if(kidEl) kidEl.innerText = `⏳ ${timeString}`;
+
+                        // Reloj para los otros niños
+                        let kidElOther = document.getElementById(`timer-kid-other-${task.id}`);
+                        if(kidElOther) kidElOther.innerText = `⏳ ${timeString}`;
                     }
                 }
             });
@@ -1073,6 +1070,14 @@
                 if(currentUserRole === 'admin') renderAdminReviews();
             }
 
+            // Escuchar e inyectar cambios de la Tienda
+            const { data: storeData } = await supabaseClient.from('ekids_store').select('*');
+            if (storeData && storeData.length > 0) {
+                globalStore = storeData.map(s => ({ id: parseInt(s.id) || s.id, title: s.title, price: s.price }));
+                if(currentUserRole === 'admin') renderAdminStoreManage();
+                if(currentUserRole === 'kid' && !document.getElementById('view-store').classList.contains('hidden')) renderStore();
+            }
+
         } catch (error) {
             console.log('Usando datos locales por el momento.');
         }
@@ -1083,6 +1088,7 @@
       .on('postgres_changes', { event: '*', schema: 'public', table: 'ekids_tasks' }, payload => { loadData(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'ekids_users' }, payload => { loadData(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'ekids_reviews' }, payload => { loadData(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ekids_store' }, payload => { loadData(); }) 
       .subscribe();
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -1156,8 +1162,8 @@
         let kid = dbUsers[activeKidId];
         document.getElementById('kid-name-display').innerText = kid.name;
         document.getElementById('kid-warnings-tag').innerText = kid.warnings > 0 ? `⚠️ ${kid.warnings} Aviso(s)` : '🟢 Todo bien';
-        document.getElementById('kid-warnings-tag').style.color = kid.warnings > 0 ? 'var(--accent-danger)' : 'white';
-        if(kid.warnings === 0) document.getElementById('kid-warnings-tag').style.background = 'rgba(255,255,255,0.2)';
+        document.getElementById('kid-warnings-tag').style.color = kid.warnings > 0 ? 'var(--accent-danger)' : 'var(--accent-green)';
+        if(kid.warnings === 0) document.getElementById('kid-warnings-tag').style.background = 'rgba(56,161,105,0.1)';
         
         let oldPoints = document.getElementById('main-points-display').innerText;
         document.querySelectorAll('.display-points').forEach(el => el.innerText = kid.points);
@@ -1235,9 +1241,19 @@
                     </div>
                 `;
             } else if (task.assignedTo) {
-                actionBtn = `<span class="tag tag-dark" style="background: var(--text-tertiary);">Ocupada</span>`;
+                // Muestra el cronómetro y el dueño a los demás niños
+                let timeLeft = getTaskDuration(task.points) - (Date.now() - task.claimedAt);
+                let timeString = formatTime(timeLeft > 0 ? timeLeft : 0);
+                let kidName = dbUsers[task.assignedTo] ? dbUsers[task.assignedTo].name : 'Otro';
+                
+                actionBtn = `
+                    <div class="flex-col gap-xs" style="align-items: flex-end;">
+                        <span id="timer-kid-other-${task.id}" class="tag-timer" style="background: rgba(0,0,0,0.05); color: var(--text-secondary); border: 1px solid var(--glass-border);">⏳ ${timeString}</span>
+                        <span class="tag tag-dark" style="background: var(--surface-alt); color: var(--text-secondary); font-size: 10px; border:none;">De ${kidName}</span>
+                    </div>
+                `;
             } else {
-                actionBtn = `<button class="btn-mini btn-outline" style="border-width:2px;" onclick="claimTaskQuick(${task.id})">TOMAR</button>`;
+                actionBtn = `<button class="btn-mini btn-outline" onclick="claimTaskQuick(${task.id})">TOMAR</button>`;
             }
 
             container.innerHTML += `
@@ -1253,11 +1269,14 @@
     }
 
     function claimTaskQuick(taskId) {
-        let task = globalTasks.find(t => t.id === taskId);
-        task.assignedTo = activeKidId;
-        task.claimedAt = Date.now();
-        saveData();
-        renderKidTasks();
+        // CORRECCIÓN: Igualdad flexible (==) para que números y strings de Supabase coincidan perfectamente
+        let task = globalTasks.find(t => t.id == taskId);
+        if (task) {
+            task.assignedTo = activeKidId;
+            task.claimedAt = Date.now();
+            saveData();
+            renderKidTasks();
+        }
     }
 
     let activeSubmitTask = null;
@@ -1312,7 +1331,8 @@
             uid: Date.now()
         });
         
-        globalTasks = globalTasks.filter(t => t.id !== activeSubmitTask.id);
+        // Igualdad flexible por prevención
+        globalTasks = globalTasks.filter(t => t.id != activeSubmitTask.id);
         saveData();
         navTo('kid-dash');
     }
@@ -1328,7 +1348,7 @@
         pendingReviews.forEach((rev, index) => {
             if (rev.type === 'prize') {
                 container.innerHTML += `
-                    <div class="card" style="border: 1px solid var(--brand-main); box-shadow: var(--shadow-glow);">
+                    <div class="card" style="border: 2px solid var(--brand-main); box-shadow: var(--shadow-glow);">
                         <div class="flex-between mb-sm">
                             <div>
                                 <strong>${rev.kidName}</strong> quiere usar su premio:
@@ -1347,13 +1367,13 @@
                         <div class="flex-between mb-sm">
                             <div>
                                 <strong>${rev.kidName}</strong>
-                                <div class="text-small">${rev.title}</div>
+                                <div class="text-small" style="color:var(--text-secondary);">${rev.title}</div>
                             </div>
                             <span style="font-weight:900; color:var(--brand-main); font-size:18px;">+${rev.points} pts</span>
                         </div>
                         <div class="flex-row gap-sm mb-md">
-                            <img src="${rev.imgBefore}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid #E5E7EB;">
-                            <img src="${rev.imgAfter}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid #E5E7EB;">
+                            <img src="${rev.imgBefore}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid rgba(0,0,0,0.1);">
+                            <img src="${rev.imgAfter}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid rgba(0,0,0,0.1);">
                         </div>
                         <div class="flex-row gap-sm">
                             <button class="btn btn-primary" style="flex:1;" onclick="approveTaskQuick(${index})">Aprobar</button>
@@ -1446,6 +1466,22 @@
     function renderAdminTasksManage() {
         const container = document.getElementById('admin-tasks-manage-list');
         container.innerHTML = '';
+
+        // Resumen de productividad por niño
+        let taskCounts = {};
+        Object.keys(dbUsers).forEach(k => taskCounts[k] = 0);
+        globalTasks.forEach(t => {
+            if (t.assignedTo && taskCounts[t.assignedTo] !== undefined) taskCounts[t.assignedTo]++;
+        });
+        
+        let summaryHtml = '<div class="card flex-row gap-sm mb-md" style="flex-wrap: wrap; background: rgba(0,0,0,0.02); justify-content: center;">';
+        Object.keys(dbUsers).forEach(k => {
+            summaryHtml += `<div class="tag tag-dark" style="font-size: 13px; background:white; color:var(--text-main); border:1px solid rgba(0,0,0,0.1);">${dbUsers[k].name}: <span style="color:var(--brand-main); font-weight:900;">${taskCounts[k]}</span></div>`;
+        });
+        summaryHtml += '</div>';
+        container.innerHTML += summaryHtml;
+
+        // Renderizado de las tareas
         globalTasks.forEach(task => {
             let timerHtml = '';
             let assignedTag = '';
@@ -1465,14 +1501,15 @@
                         <span class="font-bold text-small">${task.title} (+${task.points}p)</span>
                         ${task.assignedTo ? `<div class="flex-row mt-sm">${assignedTag}${timerHtml}</div>` : ''}
                     </div>
-                    <button class="btn-mini btn-outline" style="color:var(--accent-danger); border-color:var(--danger-soft);" onclick="deleteGlobalTask(${task.id})">Quitar</button>
+                    <button class="btn-mini btn-outline" style="color:var(--accent-danger); border-color:rgba(229,62,62,0.3);" onclick="deleteGlobalTask(${task.id})">Quitar</button>
                 </div>
             `;
         });
     }
 
     async function deleteGlobalTask(id) {
-        globalTasks = globalTasks.filter(t => t.id !== id);
+        // Igualdad flexible
+        globalTasks = globalTasks.filter(t => t.id != id);
         try { await supabaseClient.from('ekids_tasks').delete().eq('id', id.toString()); } catch(e){}
         saveData();
         renderAdminTasksManage();
@@ -1506,14 +1543,15 @@
             container.innerHTML += `
                 <div class="card card-compact flex-between">
                     <span class="font-bold text-small">${item.title} (${item.price}p)</span>
-                    <button class="btn-mini btn-outline" style="color:var(--accent-danger); border-color:var(--danger-soft);" onclick="deleteStoreItem(${item.id})">Quitar</button>
+                    <button class="btn-mini btn-outline" style="color:var(--accent-danger); border-color:rgba(229,62,62,0.3);" onclick="deleteStoreItem(${item.id})">Quitar</button>
                 </div>
             `;
         });
     }
 
     async function deleteStoreItem(id) {
-        globalStore = globalStore.filter(i => i.id !== id);
+        // Igualdad flexible
+        globalStore = globalStore.filter(i => i.id != id);
         try { await supabaseClient.from('ekids_store').delete().eq('id', id.toString()); } catch(e){}
         saveData();
         renderAdminStoreManage();
@@ -1540,7 +1578,8 @@
 
     function buyItem(itemId) {
         let kid = dbUsers[activeKidId];
-        const item = globalStore.find(i => i.id === itemId);
+        // Igualdad flexible
+        const item = globalStore.find(i => i.id == itemId);
         if (kid.points >= item.price) {
             kid.points -= item.price;
             kid.inventory.push({ ...item, uid: Date.now() });
@@ -1574,7 +1613,7 @@
 
     function useItemQuick(uid) {
         let kid = dbUsers[activeKidId];
-        let itemIndex = kid.inventory.findIndex(i => i.uid === uid);
+        let itemIndex = kid.inventory.findIndex(i => i.uid == uid);
 
         if (itemIndex > -1) {
             let item = kid.inventory[itemIndex];
