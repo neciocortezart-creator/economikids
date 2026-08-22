@@ -784,10 +784,10 @@
             <div class="card flex-row gap-sm">
                 <input type="text" id="new-task-title" class="input-clean" placeholder="Ej: Barrer">
                 <select id="new-task-complexity" class="input-clean" style="width: 120px; padding: 12px;">
-                    <option value="15">15p (1h)</option>
-                    <option value="25" selected>25p (1.5h)</option>
-                    <option value="40">40p (2h)</option>
-                    <option value="80">80p (2.5h)</option>
+                    <option value="15">15p (25m)</option>
+                    <option value="25" selected>25p (30m)</option>
+                    <option value="40">40p (40m)</option>
+                    <option value="80">80p (45m)</option>
                 </select>
                 <button class="btn-primary" style="padding: 16px; width: auto;" onclick="createNewTask()">+</button>
             </div>
@@ -910,11 +910,12 @@
 
     let pendingReviews = [];
 
+    // Tiempos ajustados según tu requerimiento exacto
     const taskDurations = {
-        15: 60 * 60 * 1000, 25: 90 * 60 * 1000, 40: 120 * 60 * 1000, 80: 150 * 60 * 1000
+        15: 25 * 60 * 1000, 25: 30 * 60 * 1000, 40: 40 * 60 * 1000, 80: 45 * 60 * 1000
     };
 
-    function getTaskDuration(points) { return taskDurations[points] || (60 * 60 * 1000); }
+    function getTaskDuration(points) { return taskDurations[points] || (30 * 60 * 1000); }
 
     function formatTime(ms) {
         let totalSeconds = Math.floor(ms / 1000);
@@ -975,7 +976,6 @@
                         let kidEl = document.getElementById(`timer-kid-${task.id}`);
                         if(kidEl) kidEl.innerText = `⏳ ${timeString}`;
 
-                        // Reloj para los otros niños
                         let kidElOther = document.getElementById(`timer-kid-other-${task.id}`);
                         if(kidElOther) kidElOther.innerText = `⏳ ${timeString}`;
                     }
@@ -1070,7 +1070,6 @@
                 if(currentUserRole === 'admin') renderAdminReviews();
             }
 
-            // Escuchar e inyectar cambios de la Tienda
             const { data: storeData } = await supabaseClient.from('ekids_store').select('*');
             if (storeData && storeData.length > 0) {
                 globalStore = storeData.map(s => ({ id: parseInt(s.id) || s.id, title: s.title, price: s.price }));
@@ -1241,7 +1240,6 @@
                     </div>
                 `;
             } else if (task.assignedTo) {
-                // Muestra el cronómetro y el dueño a los demás niños
                 let timeLeft = getTaskDuration(task.points) - (Date.now() - task.claimedAt);
                 let timeString = formatTime(timeLeft > 0 ? timeLeft : 0);
                 let kidName = dbUsers[task.assignedTo] ? dbUsers[task.assignedTo].name : 'Otro';
@@ -1268,14 +1266,17 @@
         });
     }
 
+    // Validación estricta para que nadie robe la tarea si ya está ocupada
     function claimTaskQuick(taskId) {
-        // CORRECCIÓN: Igualdad flexible (==) para que números y strings de Supabase coincidan perfectamente
         let task = globalTasks.find(t => t.id == taskId);
-        if (task) {
+        if (task && !task.assignedTo) {
             task.assignedTo = activeKidId;
             task.claimedAt = Date.now();
             saveData();
             renderKidTasks();
+        } else {
+            alert("¡Ups! Alguien más de la familia ya agarró esta misión.");
+            loadData();
         }
     }
 
@@ -1298,17 +1299,33 @@
         navTo('task-submit');
     }
 
+    // Compresión de fotos integrada al máximo para optimizar peso
     function previewImageAndHideLabel(input, previewElementId, labelId) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const img = document.getElementById(previewElementId);
-                img.src = e.target.result;
-                img.style.display = 'block';
-                document.getElementById(labelId).style.display = 'none'; 
+                const imgEl = document.getElementById(previewElementId);
+                const imgObj = new Image();
                 
-                if (previewElementId === 'img-preview-before') base64Before = e.target.result;
-                if (previewElementId === 'img-preview-after') base64After = e.target.result;
+                imgObj.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const MAX_WIDTH = 600;
+                    const scaleSize = MAX_WIDTH / imgObj.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = imgObj.height * scaleSize;
+                    ctx.drawImage(imgObj, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); 
+                    
+                    imgEl.src = compressedBase64;
+                    imgEl.style.display = 'block';
+                    document.getElementById(labelId).style.display = 'none'; 
+                    
+                    if (previewElementId === 'img-preview-before') base64Before = compressedBase64;
+                    if (previewElementId === 'img-preview-after') base64After = compressedBase64;
+                };
+                imgObj.src = e.target.result;
             }
             reader.readAsDataURL(input.files[0]);
         }
@@ -1331,7 +1348,6 @@
             uid: Date.now()
         });
         
-        // Igualdad flexible por prevención
         globalTasks = globalTasks.filter(t => t.id != activeSubmitTask.id);
         saveData();
         navTo('kid-dash');
@@ -1467,7 +1483,6 @@
         const container = document.getElementById('admin-tasks-manage-list');
         container.innerHTML = '';
 
-        // Resumen de productividad por niño
         let taskCounts = {};
         Object.keys(dbUsers).forEach(k => taskCounts[k] = 0);
         globalTasks.forEach(t => {
@@ -1481,7 +1496,6 @@
         summaryHtml += '</div>';
         container.innerHTML += summaryHtml;
 
-        // Renderizado de las tareas
         globalTasks.forEach(task => {
             let timerHtml = '';
             let assignedTag = '';
@@ -1508,7 +1522,6 @@
     }
 
     async function deleteGlobalTask(id) {
-        // Igualdad flexible
         globalTasks = globalTasks.filter(t => t.id != id);
         try { await supabaseClient.from('ekids_tasks').delete().eq('id', id.toString()); } catch(e){}
         saveData();
@@ -1550,7 +1563,6 @@
     }
 
     async function deleteStoreItem(id) {
-        // Igualdad flexible
         globalStore = globalStore.filter(i => i.id != id);
         try { await supabaseClient.from('ekids_store').delete().eq('id', id.toString()); } catch(e){}
         saveData();
@@ -1578,7 +1590,6 @@
 
     function buyItem(itemId) {
         let kid = dbUsers[activeKidId];
-        // Igualdad flexible
         const item = globalStore.find(i => i.id == itemId);
         if (kid.points >= item.price) {
             kid.points -= item.price;
