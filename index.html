@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- 1. SEO, Metatítulos y Metadescripciones -->
+    <title>Económikids App - Educación Financiera Gamificada</title>
+    <meta name="description" content="Plataforma interactiva para enseñar el valor del dinero, ahorro y responsabilidad a niños mediante misiones y recompensas.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tuweb.com/">
+
+    <!-- 2. GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TU_ID_DE_GA4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TU_ID_DE_GA4');
+    </script>
+
+    <!-- 3. Schema LocalBusiness y FAQ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Económikids",
+      "description": "App de educación financiera gamificada para niños."
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "¿Cómo funciona Económikids?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Los padres configuran misiones con plazos y los niños suben fotos de evidencia para ganar puntos canjeables por recompensas."
+        }
+      }]
+    }
+    </script>
+
+    <!-- PWA y Scripts Originales -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f0c29">
+    
+    <!-- Carga del Cliente de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+        :root {
+            --bg-body: #0f0c29;
+            --bg-gradient: linear-gradient(135deg, #1a0533 0%, #0f2027 40%, #203a43 70%, #2c5364 100%);
+            --surface: rgba(255, 255, 255, 0.10);
+            --surface-alt: rgba(255, 255, 255, 0.06);
+            --surface-solid: rgba(30, 20, 60, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-border-strong: rgba(255, 255, 255, 0.28);
+            --text-main: #F0EEFF;
+            --text-secondary: rgba(220, 210, 255, 0.75);
+            --text-tertiary: rgba(200, 190, 240, 0.50);
+            --brand-dark: #E65100;
+            --brand-main: #FF7A20;
+            --brand-light: #FFAA50;
+            --brand-soft: rgba(255, 122, 32, 0.18);
+            --brand-glow: rgba(255, 122, 32, 0.35);
+            --accent-danger: #FF6B8A;
+            --danger-soft: rgba(255, 107, 138, 0.15);
+            --accent-warn: #FFD166;
+            --warn-soft: rgba(255, 209, 102, 0.15);
+            --accent-green: #06FFA5;
+            --radius-sm: 14px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --radius-pill: 999px;
+            --shadow-sm: 0 4px 16px rgba(0,0,0,0.25);
+            --shadow-md: 0 12px 32px rgba(0,0,0,0.35);
+            --shadow-float: 0 24px 48px rgba(0,0,0,0.50);
+            --shadow-glow: 0 8px 32px rgba(255, 122, 32, 0.30);
+            --blur: blur(20px);
+            --blur-sm: blur(10px);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main); 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh;
+        }
+
+        /* Orbes de fondo animados */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -20%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(255,100,0,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: float1 8s ease-in-out infinite;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -10%;
+            right: -15%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(80,0,200,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: float2 10s ease-in-out infinite;
+        }
+        @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(5%,8%)} }
+        @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-6%,-5%)} }
+        
+        .app-container { 
+            width: 100%; 
+            max-width: 414px; 
+            background: transparent;
+            min-height: 100vh; 
+            position: relative; 
+            padding-bottom: 140px;
+            z-index: 1;
+        }
+        .hidden { display: none !important; }
+
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-gradient);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+        #splash-screen::before {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(255,120,30,0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        @keyframes pulseGlow { 0%,100%{opacity:0.5;transform:translate(-50%,-50%) scale(1)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)} }
+        #splash-screen img { width: 220px; max-width: 80%; height: auto; position: relative; z-index: 1; filter: drop-shadow(0 0 40px rgba(255,120,30,0.5)); }
+
+        .header-logo-container { text-align: center; margin-bottom: 12px; }
+        .header-logo-container img { width: 160px; max-width: 70%; height: auto; }
+
+        h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+        h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+        h3 { font-size: 18px; font-weight: 700; }
+        .text-huge { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
+        .text-muted { color: var(--text-secondary); font-size: 14px; }
+        .text-small { color: var(--text-tertiary); font-size: 13px; font-weight: 600; }
+        .section-label { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 12px; margin-top: 24px; text-transform: uppercase; letter-spacing: 0.5px;}
+
+        .flex-row { display: flex; align-items: center; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .flex-col { display: flex; flex-direction: column; }
+        .gap-xs { gap: 6px; }
+        .gap-sm { gap: 10px; }
+        .gap-md { gap: 16px; }
+        .mt-md { margin-top: 16px; }
+        .mt-lg { margin-top: 24px; }
+        .mb-sm { margin-bottom: 8px; }
+        .mb-md { margin-bottom: 16px; }
+        
+        .pad-content { padding: 0 20px; }
+        .top-bar { padding: 24px 20px 16px; }
+
+        .card { 
+            background: var(--surface); 
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border-radius: var(--radius-md); 
+            padding: 18px; 
+            margin-bottom: 14px; 
+            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.15); 
+            border: 1px solid var(--glass-border); 
+        }
+        .card-compact { padding: 14px 18px; }
+        .card-dark { background: rgba(10, 5, 30, 0.75); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); }
+        
+        .dash-hero { 
+            background: linear-gradient(135deg, rgba(255,110,0,0.85) 0%, rgba(200,50,0,0.90) 100%); 
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            color: white; 
+            border-radius: var(--radius-lg); 
+            padding: 24px; 
+            box-shadow: var(--shadow-glow), 0 2px 0 rgba(255,255,255,0.2) inset; 
+            margin-bottom: 16px; 
+            position: relative; 
+            overflow: hidden;
+            border: 1px solid rgba(255,150,80,0.40);
+        }
+        .dash-hero::before { 
+            content: ''; 
+            position: absolute; 
+            top: -40%; 
+            right: -10%; 
+            width: 160%; 
+            height: 160%; 
+            background: radial-gradient(ellipse, rgba(255,255,255,0.20) 0%, transparent 55%); 
+            pointer-events: none; 
+        }
+        .dash-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(ellipse, rgba(0,0,0,0.20) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .dash-vault { 
+            background: linear-gradient(135deg, rgba(255,183,77,0.85) 0%, rgba(255,130,0,0.90) 100%); 
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            color: white; 
+            border-radius: var(--radius-lg); 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 24px; 
+            box-shadow: 0 10px 30px rgba(255, 150, 0, 0.30), inset 0 1px 0 rgba(255,255,255,0.30);
+            border: 1px solid rgba(255, 210, 100, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .dash-vault::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: 10%;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .dash-vault .text-muted { color: rgba(255,255,255,0.85) !important; }
+        
+        .progress-track { 
+            background: rgba(0,0,0,0.30); 
+            height: 10px; 
+            border-radius: var(--radius-pill); 
+            overflow: hidden; 
+            margin: 12px 0 8px; 
+            width: 100%; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .progress-fill { 
+            background: linear-gradient(90deg, rgba(255,220,100,0.9), rgba(255,255,255,0.95)); 
+            height: 100%; 
+            width: 0%; 
+            border-radius: var(--radius-pill); 
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            box-shadow: 0 0 12px rgba(255,230,100,0.8); 
+        }
+
+        .btn { 
+            border: none; 
+            padding: 14px 22px; 
+            border-radius: var(--radius-pill); 
+            font-weight: 800; 
+            font-size: 15px; 
+            cursor: pointer; 
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--brand-main) 0%, var(--brand-dark) 100%); 
+            color: white; 
+            box-shadow: 0 6px 24px rgba(255, 110, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.25); 
+            border: 1px solid rgba(255,150,80,0.30);
+        }
+        .btn-primary:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(255, 109, 0, 0.30); }
+        
+        .btn-dark { 
+            background: rgba(10, 5, 30, 0.80); 
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            color: white; 
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255,255,255,0.10); 
+            border: 1px solid var(--glass-border);
+        }
+        .btn-dark:active { transform: scale(0.96); }
+        
+        .btn-outline { 
+            background: rgba(255,255,255,0.08); 
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            border: 1px solid var(--glass-border-strong); 
+            color: var(--text-main); 
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-outline:active { transform: scale(0.96); background: rgba(255,255,255,0.14); }
+        
+        .btn-light { 
+            background: rgba(255,255,255,0.10); 
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            color: var(--text-main); 
+            border: 1px solid var(--glass-border);
+        }
+        
+        .btn-danger { 
+            background: var(--danger-soft); 
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            color: var(--accent-danger); 
+            box-shadow: 0 6px 20px rgba(255, 80, 120, 0.20);
+            border: 1px solid rgba(255,107,138,0.25);
+        }
+        .btn-danger:active { transform: scale(0.96); }
+        
+        .btn-mini { width: auto; padding: 10px 18px; font-size: 13px; border-radius: var(--radius-pill); font-weight: 800; }
+        .btn-mini:active { transform: scale(0.94); }
+        
+        .btn-icon { 
+            width: 44px; 
+            height: 44px; 
+            padding: 0; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 20px; 
+            background: rgba(255,255,255,0.10); 
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.15); 
+            border: 1px solid var(--glass-border); 
+            cursor: pointer; 
+            transition: transform 0.1s;
+        }
+        .btn-icon:active { transform: scale(0.9); }
+        .btn-icon svg { width: 20px; height: 20px; stroke: var(--text-main); }
+
+        .cam-zone { 
+            width: 100%; 
+            height: 110px; 
+            background: var(--brand-soft); 
+            border: 1.5px dashed rgba(255,122,32,0.60); 
+            border-radius: var(--radius-md); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: var(--transition); 
+            margin-top: 8px; 
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+        }
+        .cam-zone:active { background: rgba(255,122,32,0.25); transform: scale(0.98); }
+        .cam-icon { margin-bottom: 4px; }
+        .cam-icon svg { width: 32px; height: 32px; stroke: var(--brand-main); }
+
+        .tag { font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: var(--radius-pill); display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;}
+        .tag-green { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.35); backdrop-filter: var(--blur-sm); -webkit-backdrop-filter: var(--blur-sm); }
+        .tag-dark { background: rgba(0,0,0,0.40); color: white; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: var(--blur-sm); -webkit-backdrop-filter: var(--blur-sm); }
+        .tag-danger { background: var(--danger-soft); color: var(--accent-danger); border: 1px solid rgba(255,107,138,0.25); }
+        .tag-timer { font-family: monospace; background: var(--warn-soft); color: var(--accent-warn); padding: 4px 8px; border-radius: 8px; font-weight: bold; font-size: 14px; border: 1px solid rgba(255,209,102,0.25);}
+
+        .input-clean { 
+            width: 100%; 
+            background: rgba(255,255,255,0.08); 
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            border: 1px solid var(--glass-border); 
+            padding: 16px; 
+            border-radius: var(--radius-sm); 
+            font-size: 16px; 
+            font-weight: 600; 
+            color: var(--text-main); 
+            outline: none; 
+            transition: var(--transition); 
+        }
+        .input-clean::placeholder { color: var(--text-tertiary); }
+        .input-clean:focus { border-color: rgba(255,122,32,0.70); background: rgba(255,255,255,0.12); box-shadow: 0 0 0 3px rgba(255,122,32,0.15); }
+        .input-clean option { background: #1a0533; color: var(--text-main); }
+
+        .store-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+        .store-card { 
+            background: var(--surface); 
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            padding: 20px 16px; 
+            border-radius: var(--radius-lg); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            border: 1px solid var(--glass-border); 
+            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.12); 
+            transition: transform 0.2s; 
+        }
+        .store-card:active { transform: scale(0.96); }
+
+        .bottom-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 100%; 
+            max-width: 414px; 
+            background: rgba(15, 10, 40, 0.75); 
+            backdrop-filter: blur(28px); 
+            -webkit-backdrop-filter: blur(28px);
+            border-top: 1px solid var(--glass-border); 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 16px 20px calc(16px + env(safe-area-inset-bottom)); 
+            z-index: 100; 
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.08), 0 -20px 40px rgba(0,0,0,0.30);
+        }
+        .nav-item { font-size: 14px; font-weight: 700; color: var(--text-tertiary); padding: 10px 18px; border-radius: var(--radius-pill); cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; align-items: center; gap: 4px;}
+        .nav-item.active { color: var(--brand-light); background: var(--brand-soft); border: 1px solid rgba(255,122,32,0.25); }
+        .nav-icon { width: 24px; height: 24px; margin-bottom: 2px; stroke: var(--text-tertiary); transition: var(--transition); }
+        .nav-item.active .nav-icon { stroke: var(--brand-light); }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(5, 2, 20, 0.70); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; justify-content: center; align-items: flex-end; z-index: 200; }
+        .modal-sheet { 
+            background: rgba(20, 12, 50, 0.92); 
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-bottom: none;
+            width: 100%; 
+            max-width: 414px; 
+            max-height: 85vh; 
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0; 
+            padding: 24px; 
+            overflow-y: auto; 
+            box-shadow: var(--shadow-float), inset 0 1px 0 rgba(255,255,255,0.15); 
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .login-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 24px; }
+        .profile-card { 
+            background: var(--surface); 
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            padding: 32px 16px; 
+            border-radius: var(--radius-lg); 
+            text-align: center; 
+            cursor: pointer; 
+            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.15); 
+            border: 1px solid var(--glass-border); 
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; 
+        }
+        .profile-card:active { transform: scale(0.95); border-color: rgba(255,122,32,0.60); box-shadow: var(--shadow-glow); }
+        
+        /* Estilos para los Logos Vectorizados */
+        .profile-emoji { margin-bottom: 16px; display: flex; justify-content: center; align-items: center; }
+        .profile-emoji svg { width: 56px; height: 56px; stroke: var(--text-main); transition: var(--transition); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+        .profile-card:hover .profile-emoji svg { stroke: var(--brand-main); transform: scale(1.05); }
+        
+        .admin-card { 
+            background: linear-gradient(135deg, rgba(255,110,0,0.25) 0%, rgba(150,0,200,0.20) 100%); 
+            border-color: rgba(255,122,32,0.35); 
+            box-shadow: 0 8px 24px rgba(255,80,0,0.20), inset 0 1px 0 rgba(255,255,255,0.18);
+        }
+        .admin-card .profile-emoji svg { stroke: var(--brand-main); filter: drop-shadow(0 0 12px rgba(255,122,32,0.5)); }
+
+        .text-center { text-align: center; }
+        .w-full { width: 100%; }
+        .preview-img { width: 100%; height: 180px; object-fit: cover; border-radius: var(--radius-md); display: none; margin-top: 8px; box-shadow: var(--shadow-md); border: 1px solid var(--glass-border); }
+        
+        .pop-anim { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        
+        /* Sección SEO */
+        .seo-container { 
+            background: var(--surface); 
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border-radius: var(--radius-md); 
+            padding: 24px; 
+            margin-top: 32px; 
+            box-shadow: var(--shadow-md); 
+            border: 1px solid var(--glass-border); 
+        }
+        
+        /* Ajustes generales de texto para dark bg */
+        .section-label { 
+            font-size: 12px; 
+            font-weight: 800; 
+            color: var(--text-secondary); 
+            margin-bottom: 12px; 
+            margin-top: 24px; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+        }
+
+        /* Kid banned glass */
+        #kid-banned-screen {
+            background: rgba(255,107,138,0.12) !important;
+            border: 1px solid rgba(255,107,138,0.30) !important;
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+        }
+
+        /* Table styles for dark bg */
+        table th { color: var(--text-secondary) !important; background: rgba(255,255,255,0.06) !important; }
+        table td { color: var(--text-secondary) !important; }
+        table tr { border-bottom-color: rgba(255,255,255,0.08) !important; }
+        table thead tr { border-bottom-color: rgba(255,255,255,0.15) !important; }
+        
+        select.input-clean { appearance: none; -webkit-appearance: none; }
+    </style>
+</head>
+<body>
+
+<!-- PANTALLA DE CARGA -->
+<div id="splash-screen">
+    <img src="economikids-logo-inicial.png" alt="Económikids Logo - App educativa financiera">
+</div>
+
+<div class="app-container">
+
+    <!-- LOGIN Y LANDING SEO INTEGRADA -->
+    <div id="view-profiles" class="pad-content" style="padding-top: 40px; padding-bottom: 60px;">
+        
+        <div class="header-logo-container">
+            <img src="economikids-logo-principal.png" alt="Logotipo Económikids">
+        </div>
+
+        <div class="text-center mt-md">
+            <h1 style="color: var(--text-main); font-size: 24px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 6px;">Educación Financiera Jugando</h1>
+            <p class="text-muted" style="margin-bottom: 24px; font-size: 14px; line-height: 1.4;">
+                <strong>TL;DR:</strong> Digitaliza la mesada. Gana puntos con misiones en casa y canjéalos por recompensas.
+            </p>
+            <h2 style="color: var(--text-secondary); font-size: 18px;">¿Quién va a jugar?</h2>
+        </div>
+        
+        <!-- CTA Principal: Los Perfiles con SVG Vectors -->
+        <div class="login-grid">
+            <div class="profile-card" onclick="login('Hijo 1', 'kid')">
+                <div class="profile-emoji">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <h3 id="name-kid-1">Hijo 1</h3>
+            </div>
+            <div class="profile-card" onclick="login('Hija 2', 'kid')">
+                <div class="profile-emoji">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                        <path d="M8 7a4 4 0 0 0 8 0"></path>
+                    </svg>
+                </div>
+                <h3 id="name-kid-2">Hija 2</h3>
+            </div>
+            <div class="profile-card" onclick="login('Hijo 3', 'kid')">
+                <div class="profile-emoji">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 21v-2a4 4 0 0 0-4-4h-4a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="9" r="3"></circle>
+                    </svg>
+                </div>
+                <h3 id="name-kid-3">Hijo 3</h3>
+            </div>
+            <div class="profile-card admin-card" onclick="login('Papás', 'admin')">
+                <div class="profile-emoji">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="2 4 5 16 12 11 19 16 22 4 12 7 2 4"></polygon>
+                        <path d="M4 20h16"></path>
+                    </svg>
+                </div>
+                <h3>Papás</h3>
+                <div class="text-small" style="color: rgba(255,255,255,0.7); margin-top: 4px;">Control</div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-lg">
+            <button class="btn-mini btn-outline" style="border: 2px solid var(--brand-main); color: var(--brand-main);" onclick="compartirApp()">📤 Compartir App con otra familia</button>
+        </div>
+
+        <div class="seo-container">
+            <h2 class="section-label" style="margin-top: 0;">Comparativa de Ahorro</h2>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; margin-bottom: 20px;">
+                <thead>
+                    <tr style="background: var(--surface-alt); border-bottom: 2px solid #E5E7EB;">
+                        <th style="padding: 10px; color: var(--text-main);">Método</th>
+                        <th style="padding: 10px; color: var(--text-main);">Económikids</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #E5E7EB;">
+                        <td style="padding: 10px; color: var(--text-secondary);">Tradicional / Papel</td>
+                        <td style="padding: 10px; font-weight: 700; color: var(--brand-main);">Gamificado Automático</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; color: var(--text-secondary);">Sin Intereses</td>
+                        <td style="padding: 10px; font-weight: 700; color: var(--brand-main);">Cofre con +10%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- DASHBOARD NIÑOS -->
+    <div id="view-kid-dash" class="hidden">
+        <div class="top-bar flex-between">
+            <div class="flex-col gap-xs">
+                <span class="text-small" style="font-size: 15px;">¡A darle, <span id="kid-name-display" style="font-weight: 800; color:var(--text-main);">Usuario</span>! 🚀</span>
+                <span id="kid-warnings-tag" class="text-small" style="color: var(--brand-main); font-weight: 700;">Estado ok</span>
+            </div>
+            <div class="flex-row gap-sm">
+                <button class="btn-icon" onclick="openNotificationsModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span id="notif-badge" class="hidden" style="position:absolute; top:8px; right:8px; width:12px; height:12px; background:var(--accent-danger); border-radius:50%; border:2px solid var(--surface);"></span>
+                </button>
+                <button class="btn-icon" onclick="openHistoryModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="pad-content">
+            <div id="kid-banned-screen" class="card hidden text-center" style="background: var(--danger-soft); border:none; padding: 40px 20px;">
+                <div style="font-size: 56px; margin-bottom: 16px;">⛔</div>
+                <h2 style="color: var(--accent-danger); font-size: 28px;">Cuenta Pausada</h2>
+                <p class="text-muted mt-sm mb-md" id="banned-reason-text" style="font-size: 16px;">Motivo</p>
+                <span class="tag tag-danger" id="banned-time-left" style="font-size: 16px; padding: 8px 16px;">Calculando...</span>
+            </div>
+
+            <div id="kid-normal-content">
+                <div class="dash-hero flex-col">
+                    <div class="flex-between mb-sm" style="position: relative; z-index: 2;">
+                        <span class="text-small" style="color:rgba(255,255,255,0.9); font-weight:700; text-transform:uppercase;">Puntos Listos</span>
+                        <button class="btn-mini" style="background:rgba(255,255,255,0.25); color:white; border:none; backdrop-filter:blur(4px);" onclick="setGoalPrompt()">🎯 Cambiar Meta</button>
+                    </div>
+                    <div class="text-huge mb-md flex-row gap-sm" style="position: relative; z-index: 2; font-size: 48px;">
+                        <span class="display-points" id="main-points-display">0</span> 
+                        <span style="font-size: 20px; opacity: 0.9; margin-top: 15px;">pts</span>
+                    </div>
+                    
+                    <div class="flex-between" style="position: relative; z-index: 2;">
+                        <span class="text-small font-bold" id="goal-title" style="color:white; font-size:14px;">Sin meta</span>
+                        <span class="text-small font-bold" id="goal-status-text" style="color:white; font-size:16px;">0%</span>
+                    </div>
+                    <div class="progress-track" style="position: relative; z-index: 2;">
+                        <div class="progress-fill" id="goal-progress-bar"></div>
+                    </div>
+                </div>
+
+                <div class="dash-vault">
+                    <div class="flex-col gap-xs">
+                        <span class="text-small font-bold text-muted" style="text-transform:uppercase; letter-spacing:1px;">🔒 Tu Cofre Secreto</span>
+                        <span class="text-huge" style="font-size: 32px;"><span id="vault-points">0</span> pts</span>
+                        <span class="tag tag-green" style="width: fit-content; margin-top: 4px;">+10% Extra Semanal</span>
+                    </div>
+                    <div class="flex-col gap-sm">
+                        <button class="btn-mini btn-dark" style="background: white; color: var(--brand-main);" onclick="depositVaultQuick()">➕ Guardar</button>
+                        <button class="btn-mini btn-outline" style="border-color: rgba(255,255,255,0.4); color: white; background:transparent;" onclick="withdrawVaultQuick()">➖ Sacar</button>
+                    </div>
+                </div>
+
+                <div id="kid-corrections-list"></div>
+
+                <div class="section-label">⚡ Misiones Activas</div>
+                <div id="kid-tasks-list" class="flex-col gap-sm"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA: SUBIR FOTO -->
+    <div id="view-task-submit" class="hidden pad-content" style="padding-top: 32px;">
+        <button class="btn-mini btn-outline mb-md" onclick="navTo('kid-dash')">← Atrás</button>
+        <h2 id="submit-task-title" class="mb-sm">Misión</h2>
+        <p class="text-muted mb-md">Sube tus fotos para ganarte los puntos.</p>
+
+        <div class="card flex-col gap-md" style="padding: 24px;">
+            <div>
+                <span class="text-small font-bold" style="font-size: 16px;">1. ¿Cómo estaba antes?</span>
+                <label class="cam-zone" for="task-photo-before" id="label-before">
+                    <span class="cam-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </span>
+                    <span class="text-small" style="color: var(--brand-dark);">Toca para cámara</span>
+                </label>
+                <input type="file" id="task-photo-before" accept="image/*" class="hidden" onchange="previewImageAndHideLabel(this, 'img-preview-before', 'label-before')">
+                <img id="img-preview-before" class="preview-img">
+            </div>
+            
+            <div style="height: 1px; background: #E5E7EB; margin: 8px 0;"></div>
+
+            <div>
+                <span class="text-small font-bold" style="font-size: 16px;">2. ¿Cómo quedó? ¡Brillante!</span>
+                <label class="cam-zone" for="task-photo-after" id="label-after">
+                    <span class="cam-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </span>
+                    <span class="text-small" style="color: var(--brand-dark);">Toca para cámara</span>
+                </label>
+                <input type="file" id="task-photo-after" accept="image/*" class="hidden" onchange="previewImageAndHideLabel(this, 'img-preview-after', 'label-after')">
+                <img id="img-preview-after" class="preview-img">
+            </div>
+            
+            <button class="btn btn-primary mt-md" onclick="sendTaskForReview()">🚀 ENVIAR MISIÓN</button>
+        </div>
+    </div>
+
+    <!-- MERCADO / PREMIOS -->
+    <div id="view-store" class="hidden">
+        <div class="top-bar flex-between">
+            <h2>🛒 Tienda</h2>
+            <div class="tag tag-dark" style="font-size: 18px; padding: 8px 16px; background: var(--brand-soft); color: var(--brand-dark); border-radius: 12px; font-weight:900;">
+                <span class="display-points">0</span> pts
+            </div>
+        </div>
+        
+        <div class="pad-content">
+            <div class="store-grid" id="store-catalog"></div>
+            
+            <div class="section-label mt-lg">🎒 Mis Premios Guardados</div>
+            <div id="kid-inventory" class="flex-col gap-sm"></div>
+        </div>
+    </div>
+
+    <!-- PANEL ADMIN (PAPÁS) -->
+    <div id="view-admin-dash" class="hidden">
+        <div class="top-bar flex-between">
+            <h2>Panel de Control</h2>
+        </div>
+        
+        <div class="pad-content">
+            <div class="section-label" style="margin-top: 0;">Revisiones Pendientes</div>
+            <div id="admin-pending-reviews" class="flex-col gap-sm"></div>
+
+            <div class="section-label">Regalar Puntos a Todos</div>
+            <div class="card flex-row gap-sm">
+                <input type="number" id="gift-points-amount" class="input-clean" placeholder="Ej: 50" min="1">
+                <button class="btn-primary" style="padding: 16px; width: auto;" onclick="giftPointsToAll()">Regalar</button>
+            </div>
+
+            <div class="section-label">Gestión Rápida</div>
+            <div class="card flex-col gap-sm">
+                <select id="penalty-kid" class="input-clean" onchange="updatePenaltyCardUI()"></select>
+                <input type="text" id="penalty-reason" class="input-clean" placeholder="Motivo (opcional)">
+                <div class="flex-row gap-sm">
+                    <button class="btn btn-outline" onclick="giveWarning()">⚠️ Aviso</button>
+                    <button class="btn btn-danger" onclick="applyPenalty()">🚨 Multa -50</button>
+                </div>
+                <button class="btn btn-outline w-full" id="btn-ban-action" onclick="toggleBanKid()">⛔ Vetar</button>
+            </div>
+
+            <div class="section-label">Nueva Misión (Con Cronómetro)</div>
+            <div class="card flex-row gap-sm">
+                <input type="text" id="new-task-title" class="input-clean" placeholder="Ej: Barrer">
+                <select id="new-task-complexity" class="input-clean" style="width: 120px; padding: 12px;">
+                    <option value="15">15p (1h)</option>
+                    <option value="25" selected>25p (1.5h)</option>
+                    <option value="40">40p (2h)</option>
+                    <option value="80">80p (2.5h)</option>
+                </select>
+                <button class="btn-primary" style="padding: 16px; width: auto;" onclick="createNewTask()">+</button>
+            </div>
+
+            <div class="section-label">Misiones Activas</div>
+            <div id="admin-tasks-manage-list" class="flex-col gap-sm"></div>
+
+            <div class="section-label">Gestión de Tienda (Premios)</div>
+            <div class="card flex-row gap-sm">
+                <input type="text" id="new-store-title" class="input-clean" placeholder="Ej: 🍦 Helado">
+                <input type="number" id="new-store-price" class="input-clean" style="width: 100px;" placeholder="Pts" min="1">
+                <button class="btn-primary" style="padding: 16px; width: auto;" onclick="createNewStoreItem()">+</button>
+            </div>
+            <div id="admin-store-manage-list" class="flex-col gap-sm"></div>
+            
+            <button class="btn btn-dark mt-md" onclick="payVaultInterest()">📈 Pagar Intereses Cofres</button>
+            <button class="btn btn-outline mt-md" style="color: var(--accent-danger); border-color: var(--accent-danger); background: var(--danger-soft);" onclick="hardResetData()">⚠️ REINICIAR TODO A CERO</button>
+        </div>
+    </div>
+
+    <!-- MODAL PERFIL -->
+    <div id="modal-profile" class="modal-overlay hidden" onclick="closeModal('modal-profile')">
+        <div class="modal-sheet flex-col gap-md" onclick="event.stopPropagation()">
+            <div class="flex-between mb-sm">
+                <h2>Tu Perfil</h2>
+                <button class="btn-icon" style="box-shadow:none; background:var(--surface-alt);" onclick="closeModal('modal-profile')">✕</button>
+            </div>
+            <button class="btn btn-outline" id="btn-edit-profile" onclick="editProfile()">✏️ Cambiar mi Nombre</button>
+            <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <!-- MODAL NOTIFICACIONES -->
+    <div id="modal-notifs" class="modal-overlay hidden" onclick="closeModal('modal-notifs')">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex-between mb-md">
+                <h3>Avisos Importantes</h3>
+                <button class="btn-icon" style="box-shadow:none; background:var(--surface-alt);" onclick="closeModal('modal-notifs')">✕</button>
+            </div>
+            <div id="notifs-container-list" class="flex-col gap-sm"></div>
+        </div>
+    </div>
+
+    <!-- MODAL HISTORIAL -->
+    <div id="modal-history" class="modal-overlay hidden" onclick="closeModal('modal-history')">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="flex-between mb-md">
+                <h3>Historial de Puntos</h3>
+                <button class="btn-icon" style="box-shadow:none; background:var(--surface-alt);" onclick="closeModal('modal-history')">✕</button>
+            </div>
+            <div style="position: relative; height: 180px; width: 100%; margin-bottom: 16px;">
+                <canvas id="historyChart"></canvas>
+            </div>
+            <div id="history-container-list" class="flex-col gap-sm"></div>
+        </div>
+    </div>
+
+    <!-- NAV INFERIOR CON SVGs MINIMALISTAS -->
+    <nav class="bottom-nav" id="main-nav" style="display: none;">
+        <div class="nav-item active" id="nav-dash" onclick="navTo('kid-dash')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Inicio
+        </div>
+        <div class="nav-item" id="nav-store" onclick="navTo('store')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            Premios
+        </div>
+        <div class="nav-item" onclick="openProfileModal()">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="5"></circle>
+                <path d="M20 21a8 8 0 1 0-16 0"></path>
+            </svg>
+            Perfil
+        </div>
+    </nav>
+
+</div>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                console.log('SW activo y listo.');
+            }).catch(err => console.log('Fallo SW: ', err));
+        });
+    }
+
+    // 1. INICIALIZACIÓN ÉLITE DE SUPABASE (Variables corregidas para no chocar)
+    const supabaseUrl = 'https://pvqvhvblxqaevedeuqbk.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2cXZodmJseHFhZXZlZGV1cWJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxNzU1NDMsImV4cCI6MjEwMjc1MTU0M30.WWjOoSnm2NMmc6oZwIbv2nF6JQtKerIl_QjWx2v0_4I';
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    let currentUserRole = '';
+    let activeKidId = '';
+    let historyChartInstance = null;
+
+    let dbUsers = {
+        'Hijo 1': { name: 'Hijo 1', points: 0, vault: 0, warnings: 0, bannedUntil: null, bannedReason: '', corrections: [], goal: { title: '30m Consola', price: 100 }, inventory: [], notifications: [], history: [] },
+        'Hija 2': { name: 'Hija 2', points: 0, vault: 0, warnings: 0, bannedUntil: null, bannedReason: '', corrections: [], goal: { title: 'Salida Especial', price: 150 }, inventory: [], notifications: [], history: [] },
+        'Hijo 3': { name: 'Hijo 3', points: 0, vault: 0, warnings: 0, bannedUntil: null, bannedReason: '', corrections: [], goal: { title: 'Helado', price: 80 }, inventory: [], notifications: [], history: [] }
+    };
+
+    let globalTasks = [
+        { id: 1, title: 'Lavar la loza del almuerzo', points: 25, complexity: 'Normal', assignedTo: null, claimedAt: null },
+        { id: 2, title: 'Ordenar y barrer habitación', points: 20, complexity: 'Estándar', assignedTo: null, claimedAt: null }
+    ];
+
+    let globalEvents = [];
+    let globalStore = [
+        { id: 1, title: '🎮 30m Videojuegos', price: 100 },
+        { id: 2, title: '🍦 Salida por Helado', price: 80 },
+        { id: 3, title: '🍿 Noche de Cine', price: 150 }
+    ];
+
+    let pendingReviews = [];
+
+    const taskDurations = {
+        15: 60 * 60 * 1000, 25: 90 * 60 * 1000, 40: 120 * 60 * 1000, 80: 150 * 60 * 1000
+    };
+
+    function getTaskDuration(points) { return taskDurations[points] || (60 * 60 * 1000); }
+
+    function formatTime(ms) {
+        let totalSeconds = Math.floor(ms / 1000);
+        let hours = Math.floor(totalSeconds / 3600);
+        let minutes = Math.floor((totalSeconds % 3600) / 60);
+        let seconds = totalSeconds % 60;
+        let hStr = hours > 0 ? `${hours}:` : '';
+        let mStr = minutes.toString().padStart(2, '0');
+        let sStr = seconds.toString().padStart(2, '0');
+        return `${hStr}${mStr}:${sStr}`;
+    }
+
+    function showSplashScreen(duration = 1500) {
+        const splash = document.getElementById('splash-screen');
+        splash.style.display = 'flex';
+        splash.style.opacity = '1';
+        setTimeout(() => {
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.style.display = 'none'; }, 400);
+        }, duration);
+    }
+
+    function animatePoints() {
+        document.querySelectorAll('.display-points').forEach(el => {
+            el.classList.remove('pop-anim');
+            void el.offsetWidth;
+            el.classList.add('pop-anim');
+        });
+    }
+
+    let lastRenderTime = 0;
+    function updateTimers(timestamp) {
+        if (timestamp - lastRenderTime > 1000) {
+            let needsRender = false;
+            const now = Date.now();
+
+            globalTasks.forEach(task => {
+                if (task.assignedTo && task.claimedAt) {
+                    let duration = getTaskDuration(task.points);
+                    let elapsed = now - task.claimedAt;
+                    let timeLeft = duration - elapsed;
+
+                    if (timeLeft <= 0) {
+                        let kidId = task.assignedTo;
+                        task.assignedTo = null;
+                        task.claimedAt = null;
+                        
+                        if(dbUsers[kidId]) {
+                            dbUsers[kidId].warnings = (dbUsers[kidId].warnings || 0) + 1;
+                            addNotification(kidId, 'warn', 'Tiempo Agotado ⚠️', `No terminaste "${task.title}" a tiempo. Tarea cancelada y Tarjeta Amarilla aplicada.`);
+                        }
+                        needsRender = true;
+                    } else {
+                        let timeString = formatTime(timeLeft);
+                        let adminEl = document.getElementById(`timer-admin-${task.id}`);
+                        if(adminEl) adminEl.innerText = `⏳ ${timeString}`;
+                        
+                        let kidEl = document.getElementById(`timer-kid-${task.id}`);
+                        if(kidEl) kidEl.innerText = `⏳ ${timeString}`;
+                    }
+                }
+            });
+
+            if (needsRender) {
+                saveData();
+                if(currentUserRole === 'kid') { updateKidDash(); renderKidTasks(); } 
+                else if(currentUserRole === 'admin') { renderAdminTasksManage(); updatePenaltyCardUI(); }
+            }
+            lastRenderTime = timestamp;
+        }
+        requestAnimationFrame(updateTimers);
+    }
+    requestAnimationFrame(updateTimers);
+
+    // 2. SINCRONIZACIÓN CON LA NUBE
+    async function saveData() {
+        localStorage.setItem('ekids_users', JSON.stringify(dbUsers));
+        localStorage.setItem('ekids_tasks', JSON.stringify(globalTasks));
+        localStorage.setItem('ekids_events', JSON.stringify(globalEvents));
+        localStorage.setItem('ekids_store', JSON.stringify(globalStore));
+        localStorage.setItem('ekids_pending', JSON.stringify(pendingReviews));
+
+        try {
+            await supabaseClient.from('ekids_users').upsert(
+                Object.keys(dbUsers).map(k => ({
+                    id: k,
+                    name: dbUsers[k].name,
+                    points: dbUsers[k].points,
+                    vault: dbUsers[k].vault,
+                    warnings: dbUsers[k].warnings,
+                    inventory: dbUsers[k].inventory,
+                    role: 'kid'
+                }))
+            );
+            
+            if (globalTasks.length > 0) await supabaseClient.from('ekids_tasks').upsert(globalTasks.map(t => ({ id: t.id.toString(), title: t.title, points: t.points, assigned_to: t.assignedTo, claimed_at: t.claimedAt })));
+            if (globalStore.length > 0) await supabaseClient.from('ekids_store').upsert(globalStore.map(s => ({ id: s.id.toString(), title: s.title, price: s.price })));
+            if (pendingReviews.length > 0) await supabaseClient.from('ekids_reviews').upsert(pendingReviews.map(r => ({ id: r.uid?.toString() || Date.now().toString(), type: r.type, kid_id: r.kidId, kid_name: r.kidName, title: r.title, points: r.points, img_before: r.imgBefore, img_after: r.imgAfter })));
+            
+        } catch (error) {
+            console.log('Operando offline de momento.');
+        }
+    }
+
+    async function loadData() {
+        const storedUsers = localStorage.getItem('ekids_users');
+        if (storedUsers) {
+            const parsed = JSON.parse(storedUsers);
+            Object.keys(parsed).forEach(key => { if (dbUsers[key]) dbUsers[key] = { ...dbUsers[key], ...parsed[key] }; else dbUsers[key] = parsed[key]; });
+        }
+        
+        const storedTasks = localStorage.getItem('ekids_tasks');
+        const storedEvents = localStorage.getItem('ekids_events');
+        const storedStore = localStorage.getItem('ekids_store');
+        const storedPending = localStorage.getItem('ekids_pending');
+
+        if (storedTasks) globalTasks = JSON.parse(storedTasks);
+        if (storedEvents) globalEvents = JSON.parse(storedEvents);
+        if (storedStore) globalStore = JSON.parse(storedStore);
+        if (storedPending) pendingReviews = JSON.parse(storedPending);
+        
+        updateHomeNames();
+
+        try {
+            const { data: usersData } = await supabaseClient.from('ekids_users').select('*');
+            if (usersData && usersData.length > 0) {
+                usersData.forEach(u => {
+                    if (dbUsers[u.id]) {
+                        dbUsers[u.id].points = u.points;
+                        dbUsers[u.id].vault = u.vault;
+                        dbUsers[u.id].warnings = u.warnings;
+                        if(u.inventory) dbUsers[u.id].inventory = u.inventory;
+                    }
+                });
+                updateHomeNames();
+                if(currentUserRole === 'kid') updateKidDash();
+            }
+
+            const { data: tasksData } = await supabaseClient.from('ekids_tasks').select('*');
+            if (tasksData && tasksData.length > 0) {
+                globalTasks = tasksData.map(t => ({ id: t.id, title: t.title, points: t.points, assignedTo: t.assigned_to, claimedAt: t.claimed_at }));
+                if(currentUserRole === 'kid') renderKidTasks();
+                if(currentUserRole === 'admin') renderAdminTasksManage();
+            }
+
+            const { data: reviewsData } = await supabaseClient.from('ekids_reviews').select('*');
+            if (reviewsData && reviewsData.length > 0) {
+                pendingReviews = reviewsData.map(r => ({ uid: r.id, type: r.type, kidId: r.kid_id, kidName: r.kid_name, title: r.title, points: r.points, imgBefore: r.img_before, imgAfter: r.img_after }));
+                if(currentUserRole === 'admin') renderAdminReviews();
+            }
+
+        } catch (error) {
+            console.log('Usando datos locales por el momento.');
+        }
+    }
+
+    // 4. SUSCRIPCIÓN EN TIEMPO REAL
+    supabaseClient.channel('custom-all-channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ekids_tasks' }, payload => { loadData(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ekids_users' }, payload => { loadData(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ekids_reviews' }, payload => { loadData(); })
+      .subscribe();
+
+    window.addEventListener('DOMContentLoaded', () => {
+        loadData();
+        showSplashScreen(1800);
+    });
+
+    function login(id, role) {
+        if (role === 'admin') {
+            const code = prompt("Ingresa el código de acceso para Papás:");
+            if (code !== "1234ocho") {
+                alert("Código incorrecto. Acceso denegado.");
+                return;
+            }
+            currentUserRole = 'admin';
+            document.getElementById('nav-store').style.display = 'none'; 
+            document.getElementById('nav-dash').setAttribute('onclick', "navTo('admin-dash')");
+            document.getElementById('btn-edit-profile').style.display = 'none';
+            
+            showSplashScreen(800);
+            navTo('admin-dash');
+        } else {
+            currentUserRole = 'kid';
+            activeKidId = id;
+            document.getElementById('nav-store').style.display = 'flex';
+            document.getElementById('nav-dash').setAttribute('onclick', "navTo('kid-dash')");
+            document.getElementById('btn-edit-profile').style.display = 'block';
+            
+            showSplashScreen(800);
+            navTo('kid-dash');
+        }
+        document.getElementById('view-profiles').classList.add('hidden');
+        document.getElementById('main-nav').style.display = 'flex';
+    }
+
+    function logout() {
+        closeModal('modal-profile');
+        document.getElementById('main-nav').style.display = 'none';
+        document.querySelectorAll('.app-container > div').forEach(el => {
+            if(el.id && el.id.startsWith('view-')) el.classList.add('hidden');
+        });
+        
+        showSplashScreen(800);
+        document.getElementById('view-profiles').classList.remove('hidden');
+        activeKidId = ''; currentUserRole = '';
+    }
+
+    function navTo(view) {
+        document.querySelectorAll('.app-container > div').forEach(el => {
+            if(el.id && el.id.startsWith('view-')) el.classList.add('hidden');
+        });
+        document.getElementById('view-' + view).classList.remove('hidden');
+        
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        if(view === 'kid-dash' || view === 'admin-dash') document.getElementById('nav-dash').classList.add('active');
+        if(view === 'store') document.getElementById('nav-store').classList.add('active');
+
+        if (currentUserRole === 'kid') {
+            updateKidDash(); 
+            renderKidTasks();
+            if (view === 'store') { renderStore(); renderInventory(); }
+        } else if (currentUserRole === 'admin') {
+            renderAdminReviews();
+            renderAdminTasksManage();
+            renderAdminStoreManage();
+            updatePenaltyCardUI();
+        }
+    }
+
+    function updateKidDash() {
+        let kid = dbUsers[activeKidId];
+        document.getElementById('kid-name-display').innerText = kid.name;
+        document.getElementById('kid-warnings-tag').innerText = kid.warnings > 0 ? `⚠️ ${kid.warnings} Aviso(s)` : '🟢 Todo bien';
+        document.getElementById('kid-warnings-tag').style.color = kid.warnings > 0 ? 'var(--accent-danger)' : 'white';
+        if(kid.warnings === 0) document.getElementById('kid-warnings-tag').style.background = 'rgba(255,255,255,0.2)';
+        
+        let oldPoints = document.getElementById('main-points-display').innerText;
+        document.querySelectorAll('.display-points').forEach(el => el.innerText = kid.points);
+        if(oldPoints != kid.points) animatePoints();
+
+        document.getElementById('vault-points').innerText = kid.vault;
+
+        const now = Date.now();
+        const isBanned = kid.bannedUntil && kid.bannedUntil > now;
+        const bannedScreen = document.getElementById('kid-banned-screen');
+        const normalContent = document.getElementById('kid-normal-content');
+
+        if (isBanned) {
+            bannedScreen.classList.remove('hidden');
+            normalContent.classList.add('hidden');
+            document.getElementById('banned-reason-text').innerText = kid.bannedReason || 'Inactividad';
+            const hoursLeft = Math.ceil((kid.bannedUntil - now) / (1000 * 60 * 60));
+            document.getElementById('banned-time-left').innerText = `Expira en ${hoursLeft}h`;
+        } else {
+            bannedScreen.classList.add('hidden');
+            normalContent.classList.remove('hidden');
+        }
+
+        let unreadCount = (kid.notifications || []).filter(n => !n.read).length;
+        let badgeEl = document.getElementById('notif-badge');
+        if (unreadCount > 0) badgeEl.classList.remove('hidden');
+        else badgeEl.classList.add('hidden');
+
+        if (kid.goal && kid.goal.price > 0) {
+            document.getElementById('goal-title').innerText = `Meta: ${kid.goal.title}`;
+            let pct = Math.min(100, Math.floor((kid.points / kid.goal.price) * 100));
+            document.getElementById('goal-progress-bar').style.width = pct + '%';
+            document.getElementById('goal-status-text').innerText = pct >= 100 ? '¡Logrado! 🎉' : `${pct}%`;
+        }
+    }
+
+    function renderKidTasks() {
+        const container = document.getElementById('kid-tasks-list');
+        const correctionsContainer = document.getElementById('kid-corrections-list');
+        container.innerHTML = '';
+        correctionsContainer.innerHTML = '';
+
+        let kid = dbUsers[activeKidId];
+        if (kid.corrections && kid.corrections.length > 0) {
+            correctionsContainer.innerHTML = `<div class="section-label" style="color:var(--accent-danger); margin-top:0;">🛑 Misiones para Corregir</div>`;
+            kid.corrections.forEach((corr, index) => {
+                correctionsContainer.innerHTML += `
+                    <div class="card card-compact" style="border: 2px solid var(--accent-danger); background: var(--danger-soft);">
+                        <div class="flex-between mb-sm">
+                            <span class="font-bold" style="color:var(--accent-danger); font-size:16px;">${corr.title}</span>
+                        </div>
+                        <p class="text-small mb-sm" style="color:var(--accent-danger);">"${corr.feedback}"</p>
+                        <button class="btn-mini btn-danger w-full" onclick="retryTask(${index}, '${corr.title}', ${corr.points})">Subir Corrección</button>
+                    </div>
+                `;
+            });
+        }
+
+        if(globalTasks.length === 0) {
+            container.innerHTML = `<p class="text-muted text-center mt-md">No hay misiones activas. ¡Descansa!</p>`;
+            return;
+        }
+
+        globalTasks.forEach(task => {
+            let actionBtn = '';
+
+            if (task.assignedTo === activeKidId) {
+                let timeLeft = getTaskDuration(task.points) - (Date.now() - task.claimedAt);
+                let timeString = formatTime(timeLeft > 0 ? timeLeft : 0);
+                
+                actionBtn = `
+                    <div class="flex-col gap-xs" style="align-items: flex-end;">
+                        <span id="timer-kid-${task.id}" class="tag-timer">⏳ ${timeString}</span>
+                        <button class="btn-mini btn-primary" onclick="openTaskSubmit(${task.id}, '${task.title}', ${task.points})">TERMINAR</button>
+                    </div>
+                `;
+            } else if (task.assignedTo) {
+                actionBtn = `<span class="tag tag-dark" style="background: var(--text-tertiary);">Ocupada</span>`;
+            } else {
+                actionBtn = `<button class="btn-mini btn-outline" style="border-width:2px;" onclick="claimTaskQuick(${task.id})">TOMAR</button>`;
+            }
+
+            container.innerHTML += `
+                <div class="card card-compact flex-between">
+                    <div class="flex-col gap-xs">
+                        <span class="font-bold text-main" style="font-size:16px;">${task.title}</span>
+                        <span class="text-small" style="color:var(--brand-main); font-weight:900; font-size:14px;">+${task.points} pts</span>
+                    </div>
+                    <div>${actionBtn}</div>
+                </div>
+            `;
+        });
+    }
+
+    function claimTaskQuick(taskId) {
+        let task = globalTasks.find(t => t.id === taskId);
+        task.assignedTo = activeKidId;
+        task.claimedAt = Date.now();
+        saveData();
+        renderKidTasks();
+    }
+
+    let activeSubmitTask = null;
+    let base64Before = '';
+    let base64After = '';
+
+    function openTaskSubmit(id, title, points) {
+        activeSubmitTask = { id, title, points };
+        base64Before = ''; base64After = '';
+        document.getElementById('submit-task-title').innerText = title;
+        document.getElementById('task-photo-before').value = '';
+        document.getElementById('task-photo-after').value = '';
+        document.getElementById('img-preview-before').style.display = 'none';
+        document.getElementById('img-preview-after').style.display = 'none';
+        
+        document.getElementById('label-before').style.display = 'flex';
+        document.getElementById('label-after').style.display = 'flex';
+        
+        navTo('task-submit');
+    }
+
+    function previewImageAndHideLabel(input, previewElementId, labelId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById(previewElementId);
+                img.src = e.target.result;
+                img.style.display = 'block';
+                document.getElementById(labelId).style.display = 'none'; 
+                
+                if (previewElementId === 'img-preview-before') base64Before = e.target.result;
+                if (previewElementId === 'img-preview-after') base64After = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function sendTaskForReview() {
+        if(!base64Before || !base64After) {
+            alert("¡Ey! Faltan fotos. Selecciona el Antes y el Después.");
+            return;
+        }
+        pendingReviews.push({
+            type: 'task',
+            kidId: activeKidId, 
+            kidName: dbUsers[activeKidId].name,
+            taskId: activeSubmitTask.id, 
+            title: activeSubmitTask.title,
+            points: activeSubmitTask.points, 
+            imgBefore: base64Before,
+            imgAfter: base64After,
+            uid: Date.now()
+        });
+        
+        globalTasks = globalTasks.filter(t => t.id !== activeSubmitTask.id);
+        saveData();
+        navTo('kid-dash');
+    }
+
+    function renderAdminReviews() {
+        const container = document.getElementById('admin-pending-reviews');
+        if (pendingReviews.length === 0) {
+            container.innerHTML = `<p class="text-muted text-center mt-md">Todo al día.</p>`;
+            return;
+        }
+        
+        container.innerHTML = '';
+        pendingReviews.forEach((rev, index) => {
+            if (rev.type === 'prize') {
+                container.innerHTML += `
+                    <div class="card" style="border: 1px solid var(--brand-main); box-shadow: var(--shadow-glow);">
+                        <div class="flex-between mb-sm">
+                            <div>
+                                <strong>${rev.kidName}</strong> quiere usar su premio:
+                                <div class="text-small" style="color: var(--brand-main); font-weight: bold; font-size: 16px;">🎁 ${rev.title}</div>
+                            </div>
+                        </div>
+                        <div class="flex-row gap-sm mt-md">
+                            <button class="btn btn-primary" style="flex:1;" onclick="approvePrizeQuick(${index})">¡Entregado!</button>
+                            <button class="btn btn-outline" style="flex:1;" onclick="rejectPrizeQuick(${index})">Devolver</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML += `
+                    <div class="card">
+                        <div class="flex-between mb-sm">
+                            <div>
+                                <strong>${rev.kidName}</strong>
+                                <div class="text-small">${rev.title}</div>
+                            </div>
+                            <span style="font-weight:900; color:var(--brand-main); font-size:18px;">+${rev.points} pts</span>
+                        </div>
+                        <div class="flex-row gap-sm mb-md">
+                            <img src="${rev.imgBefore}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid #E5E7EB;">
+                            <img src="${rev.imgAfter}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid #E5E7EB;">
+                        </div>
+                        <div class="flex-row gap-sm">
+                            <button class="btn btn-primary" style="flex:1;" onclick="approveTaskQuick(${index})">Aprobar</button>
+                            <button class="btn btn-outline" style="flex:1;" onclick="rejectTaskQuick(${index})">Rechazar</button>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    async function approvePrizeQuick(index) {
+        let rev = pendingReviews[index];
+        addNotification(rev.kidId, 'success', '¡Premio Entregado! 🎁', `Tus papás han entregado: ${rev.title}. ¡A disfrutar!`);
+        pendingReviews.splice(index, 1);
+        
+        try { await supabaseClient.from('ekids_reviews').delete().eq('id', rev.uid.toString()); } catch(e){}
+        saveData(); 
+        renderAdminReviews();
+    }
+
+    async function rejectPrizeQuick(index) {
+        let rev = pendingReviews[index];
+        dbUsers[rev.kidId].inventory.push({ title: rev.title, price: rev.points, uid: rev.uid || Date.now() });
+        addNotification(rev.kidId, 'warn', 'Premio en espera 🔙', `Tus papás decidieron que aún no es momento para: ${rev.title}. Se regresó a tus premios guardados.`);
+        pendingReviews.splice(index, 1);
+        
+        try { await supabaseClient.from('ekids_reviews').delete().eq('id', rev.uid.toString()); } catch(e){}
+        saveData(); 
+        renderAdminReviews();
+    }
+
+    async function approveTaskQuick(index) {
+        let rev = pendingReviews[index];
+        dbUsers[rev.kidId].points += rev.points;
+        recordHistory(rev.kidId, `Aprobado: ${rev.title}`, rev.points, true);
+        addNotification(rev.kidId, 'success', '¡Misión Aprobada! 🎉', `Te ganaste +${rev.points} pts.`);
+        pendingReviews.splice(index, 1);
+        
+        try { await supabaseClient.from('ekids_reviews').delete().eq('id', rev.uid.toString()); } catch(e){}
+        saveData(); 
+        renderAdminReviews();
+    }
+
+    async function rejectTaskQuick(index) {
+        let rev = pendingReviews[index];
+        let feedback = prompt("Detalle para mejorar:");
+        if (!feedback) return;
+        dbUsers[rev.kidId].corrections.push({ title: rev.title, feedback: feedback, points: rev.points });
+        addNotification(rev.kidId, 'danger', 'Corrección Requerida', feedback);
+        pendingReviews.splice(index, 1);
+        
+        try { await supabaseClient.from('ekids_reviews').delete().eq('id', rev.uid.toString()); } catch(e){}
+        saveData(); 
+        renderAdminReviews();
+    }
+
+    function giftPointsToAll() {
+        let amount = parseInt(document.getElementById('gift-points-amount').value);
+        if (isNaN(amount) || amount <= 0) { alert("Ingresa un número válido de puntos."); return; }
+        Object.keys(dbUsers).forEach(k => {
+            dbUsers[k].points += amount;
+            recordHistory(k, 'Regalo de Papás', amount, true);
+            addNotification(k, 'success', '¡Sorpresa! 🎁', `Te regalaron +${amount} pts.`);
+        });
+        saveData();
+        document.getElementById('gift-points-amount').value = '';
+        alert(`Se han enviado ${amount} puntos a todos con éxito.`);
+    }
+
+    function createNewTask() {
+        const title = document.getElementById('new-task-title').value.trim();
+        const select = document.getElementById('new-task-complexity');
+        if(!title) return;
+        
+        globalTasks.push({ 
+            id: Date.now(), 
+            title: title, 
+            points: parseInt(select.value), 
+            complexity: select.options[select.selectedIndex].text.split(' ')[0], 
+            assignedTo: null,
+            claimedAt: null
+        });
+        
+        document.getElementById('new-task-title').value = '';
+        saveData();
+        renderAdminTasksManage();
+    }
+
+    function renderAdminTasksManage() {
+        const container = document.getElementById('admin-tasks-manage-list');
+        container.innerHTML = '';
+        globalTasks.forEach(task => {
+            let timerHtml = '';
+            let assignedTag = '';
+
+            if (task.assignedTo && task.claimedAt) {
+                let timeLeft = getTaskDuration(task.points) - (Date.now() - task.claimedAt);
+                let timeString = formatTime(timeLeft > 0 ? timeLeft : 0);
+                
+                let kidName = dbUsers[task.assignedTo].name;
+                assignedTag = `<span class="tag tag-green" style="font-size:10px; margin-right:8px; background:var(--brand-main); border:none;">${kidName}</span>`;
+                timerHtml = `<span id="timer-admin-${task.id}" class="tag-timer" style="margin-right:8px;">⏳ ${timeString}</span>`;
+            }
+
+            container.innerHTML += `
+                <div class="card card-compact flex-between">
+                    <div class="flex-col gap-xs">
+                        <span class="font-bold text-small">${task.title} (+${task.points}p)</span>
+                        ${task.assignedTo ? `<div class="flex-row mt-sm">${assignedTag}${timerHtml}</div>` : ''}
+                    </div>
+                    <button class="btn-mini btn-outline" style="color:var(--accent-danger); border-color:var(--danger-soft);" onclick="deleteGlobalTask(${task.id})">Quitar</button>
+                </div>
+            `;
+        });
+    }
+
+    async function deleteGlobalTask(id) {
+        globalTasks = globalTasks.filter(t => t.id !== id);
+        try { await supabaseClient.from('ekids_tasks').delete().eq('id', id.toString()); } catch(e){}
+        saveData();
+        renderAdminTasksManage();
+    }
+
+    function createNewStoreItem() {
+        const title = document.getElementById('new-store-title').value.trim();
+        const price = parseInt(document.getElementById('new-store-price').value);
+        
+        if(!title || isNaN(price) || price <= 0) {
+            alert("Líder, tienes que ponerle un nombre y un precio válido al premio.");
+            return;
+        }
+        
+        globalStore.push({ 
+            id: Date.now(), 
+            title: title, 
+            price: price 
+        });
+        
+        document.getElementById('new-store-title').value = '';
+        document.getElementById('new-store-price').value = '';
+        saveData();
+        renderAdminStoreManage();
+    }
+
+    function renderAdminStoreManage() {
+        const container = document.getElementById('admin-store-manage-list');
+        container.innerHTML = '';
+        globalStore.forEach(item => {
+            container.innerHTML += `
+                <div class="card card-compact flex-between">
+                    <span class="font-bold text-small">${item.title} (${item.price}p)</span>
+                    <button class="btn-mini btn-outline" style="color:var(--accent-danger); border-color:var(--danger-soft);" onclick="deleteStoreItem(${item.id})">Quitar</button>
+                </div>
+            `;
+        });
+    }
+
+    async function deleteStoreItem(id) {
+        globalStore = globalStore.filter(i => i.id !== id);
+        try { await supabaseClient.from('ekids_store').delete().eq('id', id.toString()); } catch(e){}
+        saveData();
+        renderAdminStoreManage();
+    }
+
+    function renderStore() {
+        const container = document.getElementById('store-catalog');
+        container.innerHTML = '';
+        let kid = dbUsers[activeKidId];
+
+        globalStore.forEach(item => {
+            let canAfford = kid.points >= item.price;
+            container.innerHTML += `
+                <div class="store-card text-center" style="${canAfford ? 'border-color: var(--brand-main);' : ''}">
+                    <span class="font-bold" style="font-size:16px;">${item.title}</span>
+                    <div class="text-huge" style="font-size:24px; color:var(--brand-main); margin:4px 0;">${item.price} pts</div>
+                    <button class="btn-mini w-full ${canAfford ? 'btn-primary' : 'btn-light'}" onclick="buyItem(${item.id})">
+                        ${canAfford ? '🔥 CANJEAR' : 'Faltan pts'}
+                    </button>
+                </div>
+            `;
+        });
+    }
+
+    function buyItem(itemId) {
+        let kid = dbUsers[activeKidId];
+        const item = globalStore.find(i => i.id === itemId);
+        if (kid.points >= item.price) {
+            kid.points -= item.price;
+            kid.inventory.push({ ...item, uid: Date.now() });
+            recordHistory(activeKidId, `Canje: ${item.title}`, item.price, false);
+            saveData(); 
+            updateKidDash(); 
+            renderStore();
+            renderInventory();
+        } else {
+            alert(`Faltan ${item.price - kid.points} pts.`);
+        }
+    }
+
+    function renderInventory() {
+        const container = document.getElementById('kid-inventory');
+        container.innerHTML = '';
+        const inv = dbUsers[activeKidId].inventory;
+        if(inv.length === 0) {
+            container.innerHTML = `<p class="text-muted text-center mt-md">No tienes premios guardados.</p>`;
+            return;
+        }
+        inv.forEach(item => {
+            container.innerHTML += `
+                <div class="card card-compact flex-between">
+                    <span class="font-bold text-main" style="font-size:16px;">${item.title}</span>
+                    <button class="btn-mini btn-dark" onclick="useItemQuick(${item.uid})">USAR</button>
+                </div>
+            `;
+        });
+    }
+
+    function useItemQuick(uid) {
+        let kid = dbUsers[activeKidId];
+        let itemIndex = kid.inventory.findIndex(i => i.uid === uid);
+
+        if (itemIndex > -1) {
+            let item = kid.inventory[itemIndex];
+            kid.inventory.splice(itemIndex, 1);
+            pendingReviews.push({
+                type: 'prize',
+                kidId: activeKidId,
+                kidName: kid.name,
+                title: item.title,
+                points: item.price,
+                uid: item.uid
+            });
+            saveData();
+            renderInventory();
+            alert("¡Premio solicitado! Tus papás deben aprobarlo en su panel.");
+        }
+    }
+
+    function depositVaultQuick() {
+        let kid = dbUsers[activeKidId];
+        let amount = parseInt(prompt(`Pts. disponibles: ${kid.points}\n¿Cuánto quieres guardar en tu cofre?`));
+        if (amount > 0 && amount <= kid.points) {
+            kid.points -= amount;
+            kid.vault += amount;
+            recordHistory(activeKidId, 'Guardado en Cofre', amount, false);
+            saveData();
+            updateKidDash();
+        }
+    }
+
+    function withdrawVaultQuick() {
+        let kid = dbUsers[activeKidId];
+        let amount = parseInt(prompt(`Pts. en cofre: ${kid.vault}\n¿Cuánto quieres sacar?`));
+        if (amount > 0 && amount <= kid.vault) {
+            kid.vault -= amount;
+            kid.points += amount;
+            recordHistory(activeKidId, 'Sacado de Cofre', amount, true);
+            saveData();
+            updateKidDash();
+        }
+    }
+
+    function recordHistory(kidId, desc, amount, isAdd) {
+        if (!dbUsers[kidId].history) dbUsers[kidId].history = [];
+        dbUsers[kidId].history.push({ desc, amount, isAdd, date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+    }
+
+    function openHistoryModal() {
+        const container = document.getElementById('history-container-list');
+        container.innerHTML = '';
+        let hist = dbUsers[activeKidId].history || [];
+        
+        if(hist.length === 0) {
+            container.innerHTML = `<p class="text-muted text-center mt-sm">Sin movimientos.</p>`;
+        } else {
+            [...hist].reverse().forEach(h => {
+                container.innerHTML += `
+                    <div class="flex-between" style="padding:16px 0; border-bottom:1px solid rgba(0,0,0,0.05);">
+                        <div class="flex-col">
+                            <span class="font-bold text-main" style="font-size:15px;">${h.desc}</span>
+                            <span class="text-small" style="font-size:11px; margin-top:4px;">${h.date}</span>
+                        </div>
+                        <span class="font-bold" style="font-size:18px; color:${h.isAdd ? 'var(--brand-main)' : 'var(--accent-danger)'};">${h.isAdd ? '+' : '-'}${h.amount}</span>
+                    </div>
+                `;
+            });
+        }
+        
+        document.getElementById('modal-history').classList.remove('hidden');
+
+        const canvas = document.getElementById('historyChart');
+        if(canvas && hist.length > 0) {
+            const ctx = canvas.getContext('2d');
+            let labels = [];
+            let dataPoints = [];
+            let currentPoints = 0;
+
+            hist.forEach(h => {
+                currentPoints = h.isAdd ? currentPoints + h.amount : currentPoints - h.amount;
+                labels.push(h.date);
+                dataPoints.push(currentPoints);
+            });
+
+            if (historyChartInstance) historyChartInstance.destroy();
+            historyChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Evolución de Puntos',
+                        data: dataPoints,
+                        borderColor: '#FF6D00',
+                        backgroundColor: 'rgba(255, 109, 0, 0.15)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#E65100',
+                        pointRadius: 4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins:{legend:{display:false}} }
+            });
+        }
+    }
+
+    function addNotification(kidId, type, title, msg) {
+        if(!dbUsers[kidId].notifications) dbUsers[kidId].notifications = [];
+        dbUsers[kidId].notifications.push({ title, msg, date: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), read: false });
+    }
+
+    function openNotificationsModal() {
+        const container = document.getElementById('notifs-container-list');
+        container.innerHTML = '';
+        let notifs = dbUsers[activeKidId].notifications || [];
+        if(notifs.length === 0) {
+            container.innerHTML = `<p class="text-muted text-center">Sin avisos.</p>`;
+        } else {
+            [...notifs].reverse().forEach(n => {
+                container.innerHTML += `
+                    <div class="card card-compact" style="background:var(--surface-alt); border:none;">
+                        <span class="font-bold text-main" style="font-size:15px;">${n.title}</span>
+                        <p class="text-muted" style="margin-top:6px; font-size:14px; line-height:1.4;">${n.msg}</p>
+                    </div>
+                `;
+                n.read = true;
+            });
+            saveData();
+            updateKidDash();
+        }
+        document.getElementById('modal-notifs').classList.remove('hidden');
+    }
+
+    function openProfileModal() { document.getElementById('modal-profile').classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function updatePenaltyCardUI() {
+        let select = document.getElementById('penalty-kid');
+        let kidId = select.value;
+        if(!kidId && select.options.length > 0) kidId = select.options[0].value;
+        if(!kidId) return;
+
+        let kid = dbUsers[kidId];
+        let isBanned = kid.bannedUntil && kid.bannedUntil > Date.now();
+        document.getElementById('btn-ban-action').innerText = isBanned ? `🔓 Levantar Veto` : `⛔ Vetar`;
+    }
+
+    function toggleBanKid() {
+        let kidId = document.getElementById('penalty-kid').value;
+        let kid = dbUsers[kidId];
+        if (kid.bannedUntil && kid.bannedUntil > Date.now()) {
+            kid.bannedUntil = null;
+        } else {
+            kid.bannedUntil = Date.now() + (24 * 3600 * 1000);
+            kid.bannedReason = document.getElementById('penalty-reason').value || 'Sin actividad';
+        }
+        saveData();
+        updatePenaltyCardUI();
+    }
+
+    function giveWarning() {
+        let kidId = document.getElementById('penalty-kid').value;
+        dbUsers[kidId].warnings = (dbUsers[kidId].warnings || 0) + 1;
+        addNotification(kidId, 'warn', 'Aviso ⚠️', document.getElementById('penalty-reason').value || 'Atención requerida');
+        saveData();
+        alert('Aviso enviado');
+    }
+
+    function applyPenalty() {
+        let kidId = document.getElementById('penalty-kid').value;
+        dbUsers[kidId].points = Math.max(0, dbUsers[kidId].points - 50);
+        recordHistory(kidId, 'Multa', 50, false);
+        addNotification(kidId, 'danger', 'Multa 🚨', '-50 pts');
+        saveData();
+        alert('Multa aplicada');
+    }
+
+    function payVaultInterest() {
+        Object.keys(dbUsers).forEach(k => {
+            if(dbUsers[k].vault > 0) {
+                let gain = Math.floor(dbUsers[k].vault * 0.10);
+                dbUsers[k].vault += gain;
+                recordHistory(k, 'Interés (+10%)', gain, true);
+            }
+        });
+        saveData();
+        alert('Intereses pagados');
+    }
+
+    async function hardResetData() {
+        if(confirm("¿Seguro? Esto pondrá todo en 0.")) {
+            Object.keys(dbUsers).forEach(k => {
+                dbUsers[k].points = 0;
+                dbUsers[k].vault = 0;
+                dbUsers[k].warnings = 0;
+                dbUsers[k].history = [];
+                dbUsers[k].notifications = [];
+                dbUsers[k].inventory = [];
+                dbUsers[k].corrections = [];
+                dbUsers[k].bannedUntil = null;
+                dbUsers[k].bannedReason = '';
+            });
+            pendingReviews = [];
+            globalTasks.forEach(task => { task.assignedTo = null; task.claimedAt = null; });
+            
+            try {
+                await supabaseClient.from('ekids_reviews').delete().neq('id', '0');
+                await supabaseClient.from('ekids_tasks').delete().neq('id', '0');
+            } catch(e) {}
+
+            saveData();
+            alert("Sistema reiniciado exitosamente.");
+            logout();
+        }
+    }
+
+    function updateHomeNames() {
+        document.getElementById('name-kid-1').innerText = dbUsers['Hijo 1'].name;
+        document.getElementById('name-kid-2').innerText = dbUsers['Hija 2'].name;
+        document.getElementById('name-kid-3').innerText = dbUsers['Hijo 3'].name;
+
+        const penaltySelect = document.getElementById('penalty-kid');
+        if (penaltySelect) {
+            penaltySelect.innerHTML = `
+                <option value="Hijo 1">${dbUsers['Hijo 1'].name}</option>
+                <option value="Hija 2">${dbUsers['Hija 2'].name}</option>
+                <option value="Hijo 3">${dbUsers['Hijo 3'].name}</option>
+            `;
+        }
+    }
+
+    function editProfile() {
+        let newName = prompt("Escribe tu nuevo nombre:", dbUsers[activeKidId].name);
+        if (newName && newName.trim() !== "") {
+            dbUsers[activeKidId].name = newName.trim();
+            saveData();
+            updateKidDash();
+            updateHomeNames();
+            alert("Nombre actualizado.");
+        }
+        closeModal('modal-profile');
+    }
+
+    function setGoalPrompt() {
+        let options = globalStore.map((item, i) => `${i + 1}. ${item.title} (${item.price} pts)`).join('\n');
+        let choice = prompt(`Selecciona número del premio que quieres como meta:\n${options}`);
+        let idx = parseInt(choice) - 1;
+        if (!isNaN(idx) && globalStore[idx]) {
+            dbUsers[activeKidId].goal = { title: globalStore[idx].title, price: globalStore[idx].price };
+            saveData();
+            updateKidDash();
+        }
+    }
+
+    function compartirApp() {
+        if (navigator.share) {
+            navigator.share({ title: 'Económikids', text: 'App para educación financiera', url: window.location.href })
+            .catch(console.error);
+        } else {
+            alert('Copia este enlace: ' + window.location.href);
+        }
+    }
+</script>
+</body>
+</html>
