@@ -763,9 +763,16 @@
         updateHomeNames();
 
         try {
-            const { data: usersData } = await supabaseClient.from('ekids_users').select('*');
-            if (usersData && usersData.length > 0) {
-                usersData.forEach(u => {
+            // Peticiones independientes. Si una falla, el resto sigue vivo.
+            const [usersRes, tasksRes, reviewsRes, storeRes] = await Promise.allSettled([
+                supabaseClient.from('ekids_users').select('*'),
+                supabaseClient.from('ekids_tasks').select('*'),
+                supabaseClient.from('ekids_reviews').select('*'),
+                supabaseClient.from('ekids_store').select('*')
+            ]);
+
+            if (usersRes.status === 'fulfilled' && usersRes.value.data && usersRes.value.data.length > 0) {
+                usersRes.value.data.forEach(u => {
                     if (dbUsers[u.id]) {
                         dbUsers[u.id].points = u.points;
                         dbUsers[u.id].vault = u.vault;
@@ -777,29 +784,25 @@
                 if(currentUserRole === 'kid' && !document.getElementById('view-kid-dash').classList.contains('hidden')) updateKidDash();
             }
 
-            // CORRECCIÓN PARA BORRADO: Actualizamos incluso si la lista viene vacía (0 tareas)
-            const { data: tasksData } = await supabaseClient.from('ekids_tasks').select('*');
-            if (tasksData) {
-                globalTasks = tasksData.map(t => ({ id: t.id, title: t.title, points: t.points, assignedTo: t.assigned_to, claimedAt: t.claimed_at }));
+            if (tasksRes.status === 'fulfilled' && tasksRes.value.data) {
+                globalTasks = tasksRes.value.data.map(t => ({ id: t.id, title: t.title, points: t.points, assignedTo: t.assigned_to, claimedAt: t.claimed_at }));
                 if(currentUserRole === 'kid' && !document.getElementById('view-kid-dash').classList.contains('hidden')) renderKidTasks();
                 if(currentUserRole === 'admin' && !document.getElementById('view-admin-dash').classList.contains('hidden')) renderAdminTasksManage();
             }
 
-            const { data: reviewsData } = await supabaseClient.from('ekids_reviews').select('*');
-            if (reviewsData) {
-                pendingReviews = reviewsData.map(r => ({ uid: r.id, type: r.type, kidId: r.kid_id, kidName: r.kid_name, title: r.title, points: r.points, imgBefore: r.img_before, imgAfter: r.img_after }));
+            if (reviewsRes.status === 'fulfilled' && reviewsRes.value.data) {
+                pendingReviews = reviewsRes.value.data.map(r => ({ uid: r.id, type: r.type, kidId: r.kid_id, kidName: r.kid_name, title: r.title, points: r.points, imgBefore: r.img_before, imgAfter: r.img_after }));
                 if(currentUserRole === 'admin' && !document.getElementById('view-admin-dash').classList.contains('hidden')) renderAdminReviews();
             }
 
-            const { data: storeData } = await supabaseClient.from('ekids_store').select('*');
-            if (storeData) {
-                globalStore = storeData.map(s => ({ id: parseInt(s.id) || s.id, title: s.title, price: s.price }));
+            if (storeRes.status === 'fulfilled' && storeRes.value.data) {
+                globalStore = storeRes.value.data.map(s => ({ id: parseInt(s.id) || s.id, title: s.title, price: s.price }));
                 if(currentUserRole === 'admin' && !document.getElementById('view-admin-dash').classList.contains('hidden')) renderAdminStoreManage();
                 if(currentUserRole === 'kid' && !document.getElementById('view-store').classList.contains('hidden')) renderStore();
             }
 
         } catch (error) {
-            console.log('Usando datos locales por el momento.');
+            console.log('Error general. Usando datos locales por el momento.', error);
         }
     }
 
@@ -1410,7 +1413,9 @@
 
     function recordHistory(kidId, desc, amount, isAdd) {
         if (!dbUsers[kidId].history) dbUsers[kidId].history = [];
-        dbUsers[kidId].history.push({ desc, amount, isAdd, date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+        // Guardamos el balance real en el momento del registro
+        let balanceActual = dbUsers[kidId].points;
+        dbUsers[kidId].history.push({ desc, amount, isAdd, balance: balanceActual, date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
     }
 
     function openHistoryModal() {
@@ -1441,12 +1446,11 @@
             const ctx = canvas.getContext('2d');
             let labels = [];
             let dataPoints = [];
-            let currentPoints = 0;
 
             hist.forEach(h => {
-                currentPoints = h.isAdd ? currentPoints + h.amount : currentPoints - h.amount;
+                // Ahora los puntos se marcan exactamente según el saldo que tenían
                 labels.push(h.date);
-                dataPoints.push(currentPoints);
+                dataPoints.push(h.balance !== undefined ? h.balance : 0);
             });
 
             if (historyChartInstance) historyChartInstance.destroy();
@@ -1545,7 +1549,8 @@
     function payVaultInterest() {
         Object.keys(dbUsers).forEach(k => {
             if(dbUsers[k].vault > 0) {
-                let gain = Math.floor(dbUsers[k].vault * 0.10);
+                // CÁMBIALO A Math.ceil
+                let gain = Math.ceil(dbUsers[k].vault * 0.10);
                 dbUsers[k].vault += gain;
                 recordHistory(k, 'Interés (+10%)', gain, true);
             }
