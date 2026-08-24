@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- 1. SEO, Metatítulos y Metadescripciones -->
     <title>Económikids App - Educación Financiera Gamificada</title>
     <meta name="description" content="Plataforma interactiva para enseñar el valor del dinero, ahorro y responsabilidad a niños mediante misiones y recompensas.">
     
-    <!-- PWA y Scripts Originales -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FFFFFF">
     
-    <!-- Carga del Cliente de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -20,8 +17,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 
         :root {
-            /* ESTÉTICA PREMIUM */
-            --bg-body: #FAFAFA;
+            var(--bg-body): #FAFAFA;
             --bg-gradient: linear-gradient(135deg, #FFFFFF 0%, #FFF8E1 40%, #FFE0B2 75%, #FFCC80 100%);
             --surface: rgba(255, 255, 255, 0.70);
             --surface-alt: rgba(255, 255, 255, 0.45);
@@ -93,33 +89,17 @@
         }
         .hidden { display: none !important; }
 
-        /* Pestaña de sincronización (Toast) */
         #sync-toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: var(--brand-dark);
-            color: white;
-            padding: 12px 24px;
-            border-radius: var(--radius-pill);
-            font-weight: 800;
-            font-size: 14px;
-            box-shadow: var(--shadow-float);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 10000;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: var(--brand-dark); color: white; padding: 12px 24px; border-radius: var(--radius-pill);
+            font-weight: 800; font-size: 14px; box-shadow: var(--shadow-float); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10000; pointer-events: none; display: flex; align-items: center; gap: 8px; white-space: nowrap;
         }
         #sync-toast.show { transform: translateX(-50%) translateY(0); }
 
         #splash-screen {
             position: fixed; inset: 0; background: var(--bg-gradient); z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease-out;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease-out;
         }
         #splash-screen::before {
             content: ''; position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
@@ -259,16 +239,13 @@
 
 <div id="sync-toast">🔄 Actualiza para los nuevos cambios</div>
 
-<!-- PANTALLA DE CARGA -->
 <div id="splash-screen">
     <img src="economikids-logo-inicial.png" alt="Económikids Logo">
 </div>
 
 <div class="app-container">
 
-    <!-- LOGIN Y LANDING -->
     <div id="view-profiles" class="pad-content" style="padding-top: 40px; padding-bottom: 60px;">
-        
         <div class="header-logo-container">
             <img src="economikids-logo-principal.png" alt="Logotipo Económikids">
         </div>
@@ -281,72 +258,11 @@
             <h2 style="color: var(--text-secondary); font-size: 18px;">¿Quién va a jugar?</h2>
         </div>
         
-        <!-- CTA Principal: Los Perfiles con SVG Vectors -->
-        <div class="login-grid">
-            <div class="profile-card" onclick="login('Hijo 1', 'kid')">
-                <div class="profile-emoji">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>
-                <h3 id="name-kid-1">Hijo 1</h3>
-            </div>
-            <div class="profile-card" onclick="login('Hija 2', 'kid')">
-                <div class="profile-emoji">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                        <path d="M8 7a4 4 0 0 0 8 0"></path>
-                    </svg>
-                </div>
-                <h3 id="name-kid-2">Hija 2</h3>
-            </div>
-            <div class="profile-card" onclick="login('Hijo 3', 'kid')">
-                <div class="profile-emoji">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 21v-2a4 4 0 0 0-4-4h-4a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="9" r="3"></circle>
-                    </svg>
-                </div>
-                <h3 id="name-kid-3">Hijo 3</h3>
-            </div>
-            <div class="profile-card admin-card" onclick="login('Papás', 'admin')">
-                <div class="profile-emoji">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="2 4 5 16 12 11 19 16 22 4 12 7 2 4"></polygon>
-                        <path d="M4 20h16"></path>
-                    </svg>
-                </div>
-                <h3>Papás</h3>
-                <div class="text-small" style="color: var(--brand-dark); margin-top: 4px;">Control</div>
-            </div>
-        </div>
+        <!-- Renderizado dinámico de perfiles -->
+        <div class="login-grid" id="login-grid-container"></div>
         
         <div class="text-center mt-lg">
             <button class="btn-mini btn-outline" onclick="compartirApp()">📤 Compartir App con otra familia</button>
-        </div>
-
-        <div class="seo-container">
-            <h2 class="section-label" style="margin-top: 0;">Comparativa de Ahorro</h2>
-            <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; margin-bottom: 20px;">
-                <thead>
-                    <tr style="background: var(--surface-alt); border-bottom: 2px solid rgba(0,0,0,0.1);">
-                        <th style="padding: 10px; color: var(--text-main);">Método</th>
-                        <th style="padding: 10px; color: var(--text-main);">Económikids</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
-                        <td style="padding: 10px; color: var(--text-secondary);">Tradicional / Papel</td>
-                        <td style="padding: 10px; font-weight: 700; color: var(--brand-main);">Gamificado Automático</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; color: var(--text-secondary);">Sin Intereses</td>
-                        <td style="padding: 10px; font-weight: 700; color: var(--brand-main);">Cofre con +10%</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
@@ -420,11 +336,11 @@
         </div>
     </div>
 
-    <!-- VISTA: SUBIR FOTO -->
+    <!-- VISTA: SUBIR FOTO (OPCIONALES AHORA) -->
     <div id="view-task-submit" class="hidden pad-content" style="padding-top: 32px;">
         <button class="btn-mini btn-outline mb-md" style="border:1px solid var(--glass-border-strong);" onclick="navTo('kid-dash')">← Atrás</button>
         <h2 id="submit-task-title" class="mb-sm">Misión</h2>
-        <p class="text-muted mb-md">Sube tus fotos para ganarte los puntos.</p>
+        <p class="text-muted mb-md">Puedes subir fotos si quieres (opcional).</p>
 
         <div class="card flex-col gap-md" style="padding: 24px;">
             <div>
@@ -490,9 +406,17 @@
                 <button class="btn-primary" style="padding: 16px; width: auto;" onclick="giftPointsToAll()">Regalar</button>
             </div>
 
+            <!-- NUEVO MÓDULO: REGALO INDIVIDUAL -->
+            <div class="section-label">Regalo Especial (Individual)</div>
+            <div class="card flex-row gap-sm">
+                <select id="gift-individual-kid" class="input-clean" style="width: 140px; padding: 12px;"></select>
+                <input type="number" id="gift-individual-amount" class="input-clean" placeholder="Pts" min="1">
+                <button class="btn-primary" style="padding: 16px; width: auto;" onclick="giftPointsToSingle()">Regalar</button>
+            </div>
+
             <div class="section-label">Gestión Rápida</div>
             <div class="card flex-col gap-sm">
-                <select id="penalty-kid" class="input-clean" onchange="updatePenaltyCardUI()"></select>
+                <select id="penalty-kid" class="input-clean" onchange="updateAdminSelectors()"></select>
                 <input type="text" id="penalty-reason" class="input-clean" placeholder="Motivo (opcional)">
                 <div class="flex-row gap-sm">
                     <button class="btn btn-outline" style="border:1px solid var(--glass-border-strong);" onclick="giveWarning()">⚠️ Aviso</button>
@@ -566,7 +490,7 @@
         </div>
     </div>
 
-    <!-- NAV INFERIOR CON SVGs MINIMALISTAS -->
+    <!-- NAV INFERIOR -->
     <nav class="bottom-nav" id="main-nav" style="display: none;">
         <div class="nav-item active" id="nav-dash" onclick="navTo('kid-dash')">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -602,7 +526,6 @@
         });
     }
 
-    // TOAST DE ACTUALIZACIÓN (El anuncio tipo pestañita)
     function showSyncToast() {
         const toast = document.getElementById('sync-toast');
         if (!toast) return;
@@ -610,7 +533,6 @@
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    // 1. INICIALIZACIÓN ÉLITE DE SUPABASE
     const supabaseUrl = 'https://pvqvhvblxqaevedeuqbk.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2cXZodmJseHFhZXZlZGV1cWJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxNzU1NDMsImV4cCI6MjEwMjc1MTU0M30.WWjOoSnm2NMmc6oZwIbv2nF6JQtKerIl_QjWx2v0_4I';
     const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -630,7 +552,6 @@
     let globalStore = [];
     let pendingReviews = [];
 
-    // Tiempos ajustados según tu requerimiento exacto
     const taskDurations = {
         15: 25 * 60 * 1000, 25: 30 * 60 * 1000, 40: 40 * 60 * 1000, 80: 45 * 60 * 1000
     };
@@ -693,11 +614,11 @@
                         let adminEl = document.getElementById(`timer-admin-${task.id}`);
                         if(adminEl) adminEl.innerText = `⏳ ${timeString}`;
                         
-                        let kidEl = document.getElementById(`timer-kid-${task.id}`);
-                        if(kidEl) kidEl.innerText = `⏳ ${timeString}`;
-
-                        let kidElOther = document.getElementById(`timer-kid-other-${task.id}`);
-                        if(kidElOther) kidElOther.innerText = `⏳ ${timeString}`;
+                        // Botón cancelar dinámico a los 5 minutos (300000 ms)
+                        let cancelBtn = document.getElementById(`cancel-btn-${task.id}`);
+                        if(cancelBtn && elapsed > 300000) {
+                            cancelBtn.remove();
+                        }
                     }
                 }
             });
@@ -705,7 +626,7 @@
             if (needsRender) {
                 saveData();
                 if(currentUserRole === 'kid' && !document.getElementById('view-kid-dash').classList.contains('hidden')) { updateKidDash(); renderKidTasks(); } 
-                else if(currentUserRole === 'admin' && !document.getElementById('view-admin-dash').classList.contains('hidden')) { renderAdminTasksManage(); updatePenaltyCardUI(); }
+                else if(currentUserRole === 'admin' && !document.getElementById('view-admin-dash').classList.contains('hidden')) { renderAdminTasksManage(); updateAdminSelectors(); }
             }
             lastRenderTime = timestamp;
         }
@@ -713,7 +634,6 @@
     }
     requestAnimationFrame(updateTimers);
 
-    // 2. SINCRONIZACIÓN CON LA NUBE
     async function saveData() {
         localStorage.setItem('ekids_users', JSON.stringify(dbUsers));
         localStorage.setItem('ekids_tasks', JSON.stringify(globalTasks));
@@ -760,10 +680,9 @@
         if (storedStore) globalStore = JSON.parse(storedStore);
         if (storedPending) pendingReviews = JSON.parse(storedPending);
         
-        updateHomeNames();
+        renderHomeProfiles();
 
         try {
-            // Peticiones independientes. Si una falla, el resto sigue vivo.
             const [usersRes, tasksRes, reviewsRes, storeRes] = await Promise.allSettled([
                 supabaseClient.from('ekids_users').select('*'),
                 supabaseClient.from('ekids_tasks').select('*'),
@@ -780,7 +699,7 @@
                         if(u.inventory) dbUsers[u.id].inventory = u.inventory;
                     }
                 });
-                updateHomeNames();
+                renderHomeProfiles();
                 if(currentUserRole === 'kid' && !document.getElementById('view-kid-dash').classList.contains('hidden')) updateKidDash();
             }
 
@@ -802,11 +721,10 @@
             }
 
         } catch (error) {
-            console.log('Error general. Usando datos locales por el momento.', error);
+            console.log('Error general. Usando datos locales.', error);
         }
     }
 
-    // 4. SUSCRIPCIÓN EN TIEMPO REAL CON TOAST
     supabaseClient.channel('custom-all-channel')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'ekids_tasks' }, payload => { showSyncToast(); loadData(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'ekids_users' }, payload => { loadData(); })
@@ -819,13 +737,54 @@
         showSplashScreen(1800);
     });
 
+    function renderHomeProfiles() {
+        const container = document.getElementById('login-grid-container');
+        container.innerHTML = '';
+        Object.keys(dbUsers).forEach(k => {
+            let u = dbUsers[k];
+            container.innerHTML += `
+            <div class="profile-card" onclick="login('${k}', 'kid')">
+                <div class="profile-emoji">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <h3>${u.name}</h3>
+            </div>`;
+        });
+
+        // Botón Admin fijo
+        container.innerHTML += `
+        <div class="profile-card admin-card" onclick="login('Papás', 'admin')">
+            <div class="profile-emoji">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="2 4 5 16 12 11 19 16 22 4 12 7 2 4"></polygon>
+                    <path d="M4 20h16"></path>
+                </svg>
+            </div>
+            <h3>Papás</h3>
+            <div class="text-small" style="color: var(--brand-dark); margin-top: 4px;">Control</div>
+        </div>`;
+    }
+
     function login(id, role) {
         if (role === 'admin') {
-            const code = prompt("Ingresa el código de acceso para Papás:");
-            if (code !== "1234ocho") {
-                alert("Código incorrecto. Acceso denegado.");
+            let savedPin = localStorage.getItem('ekids_admin_pin');
+            if (!savedPin) {
+                savedPin = prompt("No hay PIN configurado. Crea tu PIN de acceso de Papás ahora:");
+                if(!savedPin) return;
+                localStorage.setItem('ekids_admin_pin', savedPin);
+                alert("PIN configurado con éxito. Por favor inicia sesión de nuevo.");
                 return;
+            } else {
+                const code = prompt("Ingresa el PIN de acceso para Papás:");
+                if (code !== savedPin) {
+                    alert("PIN incorrecto. Acceso denegado.");
+                    return;
+                }
             }
+
             currentUserRole = 'admin';
             document.getElementById('nav-store').style.display = 'none'; 
             document.getElementById('nav-dash').setAttribute('onclick', "navTo('admin-dash')");
@@ -877,7 +836,7 @@
             renderAdminReviews();
             renderAdminTasksManage();
             renderAdminStoreManage();
-            updatePenaltyCardUI();
+            updateAdminSelectors();
         }
     }
 
@@ -954,23 +913,22 @@
             let actionBtn = '';
 
             if (task.assignedTo === activeKidId) {
-                let timeLeft = getTaskDuration(task.points) - (Date.now() - task.claimedAt);
-                let timeString = formatTime(timeLeft > 0 ? timeLeft : 0);
+                let elapsed = Date.now() - task.claimedAt;
+                let canCancel = elapsed <= 300000; // 5 minutos (300000 ms)
                 
                 actionBtn = `
                     <div class="flex-col gap-xs" style="align-items: flex-end;">
-                        <span id="timer-kid-${task.id}" class="tag-timer">⏳ ${timeString}</span>
-                        <button class="btn-mini btn-primary" onclick="openTaskSubmit(${task.id}, '${task.title}', ${task.points})">TERMINAR</button>
+                        <div class="flex-row gap-xs">
+                            ${canCancel ? `<button id="cancel-btn-${task.id}" class="btn-mini btn-outline" style="border-color: var(--accent-danger); color: var(--accent-danger);" onclick="cancelTaskQuick(${task.id})">CANCELAR</button>` : ''}
+                            <button class="btn-mini btn-primary" onclick="openTaskSubmit(${task.id}, '${task.title}', ${task.points})">TERMINAR</button>
+                        </div>
                     </div>
                 `;
             } else if (task.assignedTo) {
-                let timeLeft = getTaskDuration(task.points) - (Date.now() - task.claimedAt);
-                let timeString = formatTime(timeLeft > 0 ? timeLeft : 0);
                 let kidName = dbUsers[task.assignedTo] ? dbUsers[task.assignedTo].name : 'Otro';
                 
                 actionBtn = `
                     <div class="flex-col gap-xs" style="align-items: flex-end;">
-                        <span id="timer-kid-other-${task.id}" class="tag-timer" style="background: rgba(0,0,0,0.05); color: var(--text-secondary); border: 1px solid var(--glass-border);">⏳ ${timeString}</span>
                         <span class="tag tag-dark" style="background: var(--surface-alt); color: var(--text-secondary); font-size: 10px; border:none;">De ${kidName}</span>
                     </div>
                 `;
@@ -990,7 +948,6 @@
         });
     }
 
-    // Validación estricta para que nadie robe la tarea si ya está ocupada
     function claimTaskQuick(taskId) {
         let task = globalTasks.find(t => t.id == taskId);
         if (task && !task.assignedTo) {
@@ -1001,6 +958,22 @@
         } else {
             alert("¡Ups! Alguien más de la familia ya agarró esta misión.");
             loadData();
+        }
+    }
+
+    function cancelTaskQuick(taskId) {
+        let task = globalTasks.find(t => t.id == taskId);
+        if (task && task.assignedTo === activeKidId) {
+            let elapsed = Date.now() - task.claimedAt;
+            if (elapsed <= 300000) { // Menos de 5 minutos
+                task.assignedTo = null;
+                task.claimedAt = null;
+                saveData();
+                renderKidTasks();
+            } else {
+                alert("Ya pasaron los 5 minutos, la misión debe completarse.");
+                renderKidTasks();
+            }
         }
     }
 
@@ -1023,15 +996,13 @@
         navTo('task-submit');
     }
 
-    // Para cuando toca corregir una tarea rechazada
     function retryTask(index, title, points) {
         let kid = dbUsers[activeKidId];
         kid.corrections.splice(index, 1);
         saveData();
-        openTaskSubmit(Date.now(), title, points); // ID temporal para resubir
+        openTaskSubmit(Date.now(), title, points);
     }
 
-    // Compresión de fotos integrada al máximo para optimizar peso
     function previewImageAndHideLabel(input, previewElementId, labelId) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -1064,12 +1035,7 @@
     }
 
     async function sendTaskForReview() {
-        if(!base64Before || !base64After) {
-            alert("¡Ey! Faltan fotos. Selecciona el Antes y el Después.");
-            return;
-        }
-
-        // CANDADO ANTI-TRAMPA: Validar si ya enviaron la misma tarea
+        // CANDADO ANTI-TRAMPA
         let alreadySent = pendingReviews.find(r => r.title === activeSubmitTask.title && r.kidId === activeKidId);
         if (alreadySent) {
             alert("🛑 Ya esta tarea la enviaste. Espera a que tus papás la revisen.");
@@ -1089,7 +1055,6 @@
             uid: Date.now()
         });
         
-        // BORRAR TAREA (Tanto local como en Supabase) PARA QUE DESAPAREZCA A TODOS
         globalTasks = globalTasks.filter(t => t.id != activeSubmitTask.id);
         try { await supabaseClient.from('ekids_tasks').delete().eq('id', activeSubmitTask.id.toString()); } catch(e){}
         
@@ -1122,6 +1087,14 @@
                     </div>
                 `;
             } else {
+                let imgsHtml = '';
+                if (rev.imgBefore || rev.imgAfter) {
+                    imgsHtml = `<div class="flex-row gap-sm mb-md">
+                        ${rev.imgBefore ? `<img src="${rev.imgBefore}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid rgba(0,0,0,0.1);">` : ''}
+                        ${rev.imgAfter ? `<img src="${rev.imgAfter}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid rgba(0,0,0,0.1);">` : ''}
+                    </div>`;
+                }
+
                 container.innerHTML += `
                     <div class="card">
                         <div class="flex-between mb-sm">
@@ -1131,10 +1104,7 @@
                             </div>
                             <span style="font-weight:900; color:var(--brand-main); font-size:18px;">+${rev.points} pts</span>
                         </div>
-                        <div class="flex-row gap-sm mb-md">
-                            <img src="${rev.imgBefore}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid rgba(0,0,0,0.1);">
-                            <img src="${rev.imgAfter}" style="width:50%; height:120px; object-fit:cover; border-radius:var(--radius-sm); border: 1px solid rgba(0,0,0,0.1);">
-                        </div>
+                        ${imgsHtml}
                         <div class="flex-row gap-sm">
                             <button class="btn btn-primary" style="flex:1;" onclick="approveTaskQuick(${index})">Aprobar</button>
                             <button class="btn btn-outline" style="flex:1;" onclick="rejectTaskQuick(${index})">Rechazar</button>
@@ -1149,7 +1119,6 @@
         let rev = pendingReviews[index];
         addNotification(rev.kidId, 'success', '¡Premio Entregado! 🎁', `Tus papás han entregado: ${rev.title}. ¡A disfrutar!`);
         pendingReviews.splice(index, 1);
-        
         try { await supabaseClient.from('ekids_reviews').delete().eq('id', rev.uid.toString()); } catch(e){}
         saveData(); 
         renderAdminReviews();
@@ -1160,7 +1129,6 @@
         dbUsers[rev.kidId].inventory.push({ title: rev.title, price: rev.points, uid: rev.uid || Date.now() });
         addNotification(rev.kidId, 'warn', 'Premio en espera 🔙', `Tus papás decidieron que aún no es momento para: ${rev.title}. Se regresó a tus premios guardados.`);
         pendingReviews.splice(index, 1);
-        
         try { await supabaseClient.from('ekids_reviews').delete().eq('id', rev.uid.toString()); } catch(e){}
         saveData(); 
         renderAdminReviews();
@@ -1172,7 +1140,6 @@
         recordHistory(rev.kidId, `Aprobado: ${rev.title}`, rev.points, true);
         addNotification(rev.kidId, 'success', '¡Misión Aprobada! 🎉', `Te ganaste +${rev.points} pts.`);
         pendingReviews.splice(index, 1);
-        
         try { await supabaseClient.from('ekids_reviews').delete().eq('id', rev.uid.toString()); } catch(e){}
         saveData(); 
         renderAdminReviews();
@@ -1185,7 +1152,6 @@
         dbUsers[rev.kidId].corrections.push({ title: rev.title, feedback: feedback, points: rev.points });
         addNotification(rev.kidId, 'danger', 'Corrección Requerida', feedback);
         pendingReviews.splice(index, 1);
-        
         try { await supabaseClient.from('ekids_reviews').delete().eq('id', rev.uid.toString()); } catch(e){}
         saveData(); 
         renderAdminReviews();
@@ -1202,6 +1168,24 @@
         saveData();
         document.getElementById('gift-points-amount').value = '';
         alert(`Se han enviado ${amount} puntos a todos con éxito.`);
+    }
+
+    // NUEVA FUNCIÓN: Regalar puntos a un solo hijo
+    function giftPointsToSingle() {
+        let kidId = document.getElementById('gift-individual-kid').value;
+        let amount = parseInt(document.getElementById('gift-individual-amount').value);
+        
+        if (!kidId || isNaN(amount) || amount <= 0) { 
+            alert("Líder, selecciona un hijo y una cantidad válida."); 
+            return; 
+        }
+        
+        dbUsers[kidId].points += amount;
+        recordHistory(kidId, 'Regalo especial de Papás', amount, true);
+        addNotification(kidId, 'success', '¡Premio Especial! 🎁', `Tus papás te regalaron +${amount} pts.`);
+        saveData();
+        document.getElementById('gift-individual-amount').value = '';
+        alert(`Se han enviado ${amount} puntos a ${dbUsers[kidId].name} con éxito.`);
     }
 
     function createNewTask() {
@@ -1281,11 +1265,7 @@
             return;
         }
         
-        globalStore.push({ 
-            id: Date.now(), 
-            title: title, 
-            price: price 
-        });
+        globalStore.push({ id: Date.now(), title: title, price: price });
         
         document.getElementById('new-store-title').value = '';
         document.getElementById('new-store-price').value = '';
@@ -1413,7 +1393,6 @@
 
     function recordHistory(kidId, desc, amount, isAdd) {
         if (!dbUsers[kidId].history) dbUsers[kidId].history = [];
-        // Guardamos el balance real en el momento del registro
         let balanceActual = dbUsers[kidId].points;
         dbUsers[kidId].history.push({ desc, amount, isAdd, balance: balanceActual, date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
     }
@@ -1448,7 +1427,6 @@
             let dataPoints = [];
 
             hist.forEach(h => {
-                // Ahora los puntos se marcan exactamente según el saldo que tenían
                 labels.push(h.date);
                 dataPoints.push(h.balance !== undefined ? h.balance : 0);
             });
@@ -1505,10 +1483,22 @@
     function openProfileModal() { document.getElementById('modal-profile').classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    function updatePenaltyCardUI() {
-        let select = document.getElementById('penalty-kid');
-        let kidId = select.value;
-        if(!kidId && select.options.length > 0) kidId = select.options[0].value;
+    // Función actualizada para llenar automáticamente los selectores de Admin
+    function updateAdminSelectors() {
+        let penaltySelect = document.getElementById('penalty-kid');
+        let giftSelect = document.getElementById('gift-individual-kid');
+        
+        let currentOptions = Array.from(penaltySelect.options).map(o => o.value);
+        let validKids = Object.keys(dbUsers).filter(k => dbUsers[k].role !== 'admin');
+        
+        if(currentOptions.join(',') !== validKids.join(',')) {
+            let optionsHTML = validKids.map(k => `<option value="${k}">${dbUsers[k].name}</option>`).join('');
+            penaltySelect.innerHTML = optionsHTML;
+            if (giftSelect) giftSelect.innerHTML = optionsHTML;
+        }
+
+        let kidId = penaltySelect.value;
+        if(!kidId && penaltySelect.options.length > 0) kidId = penaltySelect.options[0].value;
         if(!kidId) return;
 
         let kid = dbUsers[kidId];
@@ -1526,7 +1516,7 @@
             kid.bannedReason = document.getElementById('penalty-reason').value || 'Sin actividad';
         }
         saveData();
-        updatePenaltyCardUI();
+        updateAdminSelectors();
     }
 
     function giveWarning() {
@@ -1549,7 +1539,6 @@
     function payVaultInterest() {
         Object.keys(dbUsers).forEach(k => {
             if(dbUsers[k].vault > 0) {
-                // CÁMBIALO A Math.ceil
                 let gain = Math.ceil(dbUsers[k].vault * 0.10);
                 dbUsers[k].vault += gain;
                 recordHistory(k, 'Interés (+10%)', gain, true);
@@ -1586,28 +1575,13 @@
         }
     }
 
-    function updateHomeNames() {
-        document.getElementById('name-kid-1').innerText = dbUsers['Hijo 1'].name;
-        document.getElementById('name-kid-2').innerText = dbUsers['Hija 2'].name;
-        document.getElementById('name-kid-3').innerText = dbUsers['Hijo 3'].name;
-
-        const penaltySelect = document.getElementById('penalty-kid');
-        if (penaltySelect) {
-            penaltySelect.innerHTML = `
-                <option value="Hijo 1">${dbUsers['Hijo 1'].name}</option>
-                <option value="Hija 2">${dbUsers['Hija 2'].name}</option>
-                <option value="Hijo 3">${dbUsers['Hijo 3'].name}</option>
-            `;
-        }
-    }
-
     function editProfile() {
         let newName = prompt("Escribe tu nuevo nombre:", dbUsers[activeKidId].name);
         if (newName && newName.trim() !== "") {
             dbUsers[activeKidId].name = newName.trim();
             saveData();
             updateKidDash();
-            updateHomeNames();
+            renderHomeProfiles();
             alert("Nombre actualizado.");
         }
         closeModal('modal-profile');
